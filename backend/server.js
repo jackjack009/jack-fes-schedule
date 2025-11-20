@@ -12,28 +12,32 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy is required for cookies to work on Render/Heroku
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        'https://jack-fes-schedule.vercel.app' // Add your Vercel URL here
+        'https://jack-fes-schedule.vercel.app'
     ],
     credentials: true
-}));
+})); 
 app.use(express.json());
 app.use(session({
     secret: process.env.SESSION_SECRET || 'slot-booking-secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: tr ue, // Always true for cross-site (Render is HTTPS)
+        sameSite: 'none', // Required for cross-site cookies
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
-}));
+        }
+    })); 
 
-// Routes
-app.use('/api/auth', authRoutes);
+            // Routes
+            app.use('/api/auth', authRoutes);
 app.use('/api/dates', dateRoutes);
 
 // Health check
@@ -47,6 +51,10 @@ const startServer = async () => {
         // Connect to MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
         console.log('✅ Connected to MongoDB');
+
+        // DELETE OLD ADMIN IF EXISTS
+               await Admin.deleteOne({ username: 'admin' });
+        console.log('🗑️ Removed old "admin" user if existed');
 
         // Check if default admin exists
         const adminExists = await Admin.findOne({ username: 'jackjack' });
