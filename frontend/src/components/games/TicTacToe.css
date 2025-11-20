@@ -1,0 +1,66 @@
+.tictactoe-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.status {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-text-primary);
+    margin-bottom: 10px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    background: var(--color-bg-tertiary);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.square {
+    width: 80px;
+    height: 80px;
+    background: var(--color-bg-primary);
+    border: none;
+    border-radius: 5px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: var(--color-text-primary);
+}
+
+.square:hover:not(:disabled) {
+    background: var(--color-bg-secondary);
+}
+
+.square.x {
+    color: var(--color-primary);
+}
+
+.square.o {
+    color: var(--color-secondary);
+}
+
+.reset-btn {
+    padding: 10px 20px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.reset-btn:hover {
+    background: var(--color-primary-dark);
+}

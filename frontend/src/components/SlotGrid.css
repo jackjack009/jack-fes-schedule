@@ -1,0 +1,202 @@
+.slot-grid {
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    height: fit-content;
+    max-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border);
+}
+
+.slot-grid-header {
+    padding: var(--spacing-lg);
+    background: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.slot-grid-header h3 {
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.slot-grid-legend {
+    display: flex;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legend-dot.available {
+    background: var(--color-success);
+}
+
+.legend-dot.unavailable {
+    background: var(--color-danger);
+}
+
+.slot-grid-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--spacing-md);
+    align-content: start;
+}
+
+.slot-item {
+    padding: var(--spacing-lg) var(--spacing-md);
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+    animation: fadeIn 0.3s ease-out backwards;
+    text-align: center;
+}
+
+.slot-item.available {
+    border-color: var(--color-success);
+    background: var(--color-success-light);
+}
+
+.slot-item.available:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.slot-item.unavailable {
+    border-color: var(--color-danger);
+    background: var(--color-danger-light);
+    opacity: 0.6;
+}
+
+.slot-time {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.slot-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.success {
+    background: transparent;
+    color: var(--color-success);
+}
+
+.status-badge.danger {
+    background: transparent;
+    color: var(--color-danger);
+}
+
+.slot-grid-empty {
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px dashed var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.slot-grid-empty-content {
+    text-align: center;
+    padding: var(--spacing-2xl);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--spacing-lg);
+}
+
+.slot-grid-empty-content h3 {
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.slot-grid-empty-content p {
+    color: var(--color-text-tertiary);
+    margin: 0;
+}
+
+@media (max-width: 1024px) {
+    .slot-grid-items {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: var(--spacing-sm);
+    }
+}
+
+@media (max-width: 768px) {
+    .slot-grid {
+        max-height: none;
+    }
+
+    .slot-grid-header {
+        padding: var(--spacing-md);
+    }
+
+    .slot-grid-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .slot-grid-items {
+        padding: var(--spacing-md);
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .slot-item {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+
+    .slot-time {
+        font-size: 0.9rem;
+    }
+
+    .slot-grid-empty {
+        min-height: 300px;
+    }
+
+    .empty-icon {
+        font-size: 2.5rem;
+    }
+}

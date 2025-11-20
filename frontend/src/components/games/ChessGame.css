@@ -1,0 +1,97 @@
+.chess-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.status {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-text-primary);
+}
+
+.status span.white {
+    color: #e0e0e0;
+    text-shadow: 0 0 2px black;
+}
+
+.status span.black {
+    color: #333;
+}
+
+.chess-board {
+    border: 5px solid #5c4033;
+    border-radius: 4px;
+    user-select: none;
+}
+
+.chess-row {
+    display: flex;
+}
+
+.chess-square {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    cursor: pointer;
+    position: relative;
+}
+
+.chess-square.white {
+    background-color: #f0d9b5;
+}
+
+.chess-square.black {
+    background-color: #b58863;
+}
+
+.chess-square.selected {
+    background-color: #7b61ff !important;
+}
+
+.chess-square.possible {
+    position: relative;
+}
+
+.chess-square.possible::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 255, 0, 0.3);
+    pointer-events: none;
+}
+
+.move-dot {
+    width: 15px;
+    height: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+}
+
+.chess-piece {
+    cursor: pointer;
+    line-height: 1;
+}
+
+.chess-piece.white {
+    color: #fff;
+    text-shadow: 0 0 2px #000;
+}
+
+.chess-piece.black {
+    color: #000;
+}
+
+@media (max-width: 500px) {
+    .chess-square {
+        width: 40px;
+        height: 40px;
+        font-size: 2rem;
+    }
+}

@@ -1,0 +1,44 @@
+.game-section {
+    margin-top: 40px;
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.game-tabs {
+    display: flex;
+    background: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.game-tab {
+    flex: 1;
+    padding: 15px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.game-tab:hover {
+    color: var(--color-text-primary);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.game-tab.active {
+    color: var(--color-primary);
+    background: var(--color-bg-primary);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.game-content {
+    padding: 20px;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+}
