@@ -47,15 +47,15 @@ const Home = () => {
             {loading ? (
                 <div className="loading-container">
                     <div className="spinner"></div>
-                    <p>Loading slots...</p>
+                    <p>Lịch vẫn đang load. Hihi thông cảm...</p>
                 </div>
             ) : error ? (
                 <div className="error-container">
                     <span className="error-icon">⚠️</span>
-                    <h3>Oops! Something went wrong</h3>
+                    <h3>Vãi cức. Có gì đó sai sai rồi. Nhắn thằng Jack gấp nhé.</h3>
                     <p>{error}</p>
                     <button onClick={fetchDates} className="btn btn-primary">
-                        Try Again
+                        Thử lại
                     </button>
                 </div>
             ) : (
