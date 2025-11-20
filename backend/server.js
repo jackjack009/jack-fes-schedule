@@ -29,7 +29,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: tr ue, // Always true for cross-site (Render is HTTPS)
+        secure: true, // Always true for cross-site (Render is HTTPS)
         sameSite: 'none', // Required for cross-site cookies
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
