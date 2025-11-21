@@ -121,6 +121,7 @@ const Game2048 = () => {
 
     // Touch Handlers
     const handleTouchStart = (e) => {
+        e.preventDefault(); // Prevent page scrolling
         setTouchStart({
             x: e.touches[0].clientX,
             y: e.touches[0].clientY
@@ -129,6 +130,8 @@ const Game2048 = () => {
 
     const handleTouchEnd = (e) => {
         if (!touchStart) return;
+
+        e.preventDefault(); // Prevent page scrolling
 
         const touchEnd = {
             x: e.changedTouches[0].clientX,
