@@ -20,10 +20,11 @@ app.use(cors({
     origin: [
         'http://localhost:5173',
         'https://jack-fes-schedule.vercel.app',
-        'https://www.jackjack.cc/'
+        'https://www.jackjack.cc',
+        'https://jackjack.cc'
     ],
     credentials: true
-})); 
+}));
 app.use(express.json());
 app.use(session({
     secret: process.env.SESSION_SECRET || 'slot-booking-secret',
@@ -34,11 +35,11 @@ app.use(session({
         sameSite: 'none', // Required for cross-site cookies
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
-        }
-    })); 
+    }
+}));
 
-            // Routes
-            app.use('/api/auth', authRoutes);
+// Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/dates', dateRoutes);
 
 // Health check
@@ -54,7 +55,7 @@ const startServer = async () => {
         console.log('✅ Connected to MongoDB');
 
         // DELETE OLD ADMIN IF EXISTS
-               await Admin.deleteOne({ username: 'admin' });
+        await Admin.deleteOne({ username: 'admin' });
         console.log('🗑️ Removed old "admin" user if existed');
 
         // Check if default admin exists
