@@ -2,6 +2,7 @@ import { useState } from 'react';
 import TicTacToe from './TicTacToe';
 import Game2048 from './Game2048';
 import ChessGame from './ChessGame';
+import FlappyBird from './FlappyBird';
 import './GameSection.css';
 
 const GameSection = () => {
@@ -28,15 +29,23 @@ const GameSection = () => {
                 >
                     🔢 2048
                 </button>
+                <button
+                    className={`game-tab ${activeTab === 'flappy' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('flappy')}
+                >
+                    🐦 Flappy Bird
+                </button>
             </div>
 
             <div className="game-content">
                 {activeTab === 'tictactoe' && <TicTacToe />}
                 {activeTab === 'chess' && <ChessGame />}
                 {activeTab === '2048' && <Game2048 />}
+                {activeTab === 'flappy' && <FlappyBird />}
             </div>
         </div>
     );
 };
 
 export default GameSection;
+
