@@ -5,6 +5,7 @@ const Game2048 = () => {
     const [board, setBoard] = useState(Array(4).fill().map(() => Array(4).fill(0)));
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
+    const [touchStart, setTouchStart] = useState(null);
 
     const initializeGame = () => {
         const newBoard = Array(4).fill().map(() => Array(4).fill(0));
@@ -118,6 +119,39 @@ const Game2048 = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [move]);
 
+    // Touch Handlers
+    const handleTouchStart = (e) => {
+        setTouchStart({
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY
+        });
+    };
+
+    const handleTouchEnd = (e) => {
+        if (!touchStart) return;
+
+        const touchEnd = {
+            x: e.changedTouches[0].clientX,
+            y: e.changedTouches[0].clientY
+        };
+
+        const dx = touchEnd.x - touchStart.x;
+        const dy = touchEnd.y - touchStart.y;
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            // Horizontal swipe
+            if (Math.abs(dx) > 30) { // Threshold
+                move(dx > 0 ? 'right' : 'left');
+            }
+        } else {
+            // Vertical swipe
+            if (Math.abs(dy) > 30) {
+                move(dy > 0 ? 'down' : 'up');
+            }
+        }
+        setTouchStart(null);
+    };
+
     return (
         <div className="game2048-container">
             <div className="header-2048">
@@ -128,7 +162,11 @@ const Game2048 = () => {
                 <button className="new-game-btn" onClick={initializeGame}>New Game</button>
             </div>
 
-            <div className="board-2048">
+            <div
+                className="board-2048"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+            >
                 {board.map((row, r) => (
                     <div key={r} className="row-2048">
                         {row.map((cell, c) => (
@@ -145,7 +183,7 @@ const Game2048 = () => {
                     </div>
                 )}
             </div>
-            <p className="instructions">Use arrow keys to move tiles</p>
+            <p className="instructions">Use arrow keys or swipe to move tiles</p>
         </div>
     );
 };

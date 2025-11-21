@@ -1,197 +1,429 @@
 import { useState, useEffect, useCallback } from 'react';
 import './ChessGame.css';
 
-const initialBoard = [
-    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-    Array(8).fill(null),
-    Array(8).fill(null),
-    Array(8).fill(null),
-    Array(8).fill(null),
-    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
-];
+// Constants
+const WHITE = 0;
+const BLACK = 1;
+const EMPTY = 0, PAWN = 1, KNIGHT = 2, BISHOP = 3, ROOK = 4, QUEEN = 5, KING = 6;
 
 const PIECES = {
     'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
     'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
 };
 
-const PIECE_VALUES = {
-    'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 100,
-    'P': 1, 'N': 3, 'B': 3, 'R': 5, 'Q': 9, 'K': 100
-};
+// Chess Logic Engine
+class ChessLogic {
+    constructor() {
+        this.board = new Array(64).fill(null);
+        this.turn = WHITE;
+        this.history = [];
+        this.gameOver = false;
+        this.loadFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+    }
 
-const ChessGame = () => {
-    const [board, setBoard] = useState(initialBoard);
-    const [turn, setTurn] = useState('white'); // white (Player) or black (Bot)
-    const [selected, setSelected] = useState(null);
-    const [possibleMoves, setPossibleMoves] = useState([]);
-    const [gameStatus, setGameStatus] = useState('playing'); // playing, checkmate, draw
+    reset() {
+        this.loadFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+        this.gameOver = false;
+    }
 
-    const isWhite = (piece) => piece === piece.toUpperCase();
-    const isBlack = (piece) => piece === piece.toLowerCase();
-    const getPieceColor = (piece) => piece ? (isWhite(piece) ? 'white' : 'black') : null;
-
-    // Helper: Check if path is clear (for sliding pieces)
-    const isPathClear = (startR, startC, endR, endC, currentBoard) => {
-        const dR = Math.sign(endR - startR);
-        const dC = Math.sign(endC - startC);
-        let r = startR + dR;
-        let c = startC + dC;
-
-        while (r !== endR || c !== endC) {
-            if (currentBoard[r][c]) return false;
-            r += dR;
-            c += dC;
-        }
-        return true;
-    };
-
-    // Helper: Validate move
-    const isValidMove = (startR, startC, endR, endC, piece, currentBoard) => {
-        const target = currentBoard[endR][endC];
-        if (target && getPieceColor(target) === getPieceColor(piece)) return false;
-
-        const dR = endR - startR;
-        const dC = endC - startC;
-        const absDR = Math.abs(dR);
-        const absDC = Math.abs(dC);
-        const type = piece.toLowerCase();
-
-        switch (type) {
-            case 'p': // Pawn
-                const direction = isWhite(piece) ? -1 : 1;
-                const startRow = isWhite(piece) ? 6 : 1;
-
-                // Move forward 1
-                if (dC === 0 && dR === direction && !target) return true;
-                // Move forward 2
-                if (dC === 0 && dR === direction * 2 && startR === startRow && !target && !currentBoard[startR + direction][startC]) return true;
-                // Capture
-                if (absDC === 1 && dR === direction && target) return true;
-                return false;
-
-            case 'r': // Rook
-                if (dR !== 0 && dC !== 0) return false;
-                return isPathClear(startR, startC, endR, endC, currentBoard);
-
-            case 'b': // Bishop
-                if (absDR !== absDC) return false;
-                return isPathClear(startR, startC, endR, endC, currentBoard);
-
-            case 'q': // Queen
-                if (dR !== 0 && dC !== 0 && absDR !== absDC) return false;
-                return isPathClear(startR, startC, endR, endC, currentBoard);
-
-            case 'n': // Knight
-                return (absDR === 2 && absDC === 1) || (absDR === 1 && absDC === 2);
-
-            case 'k': // King
-                return absDR <= 1 && absDC <= 1;
-
-            default:
-                return false;
-        }
-    };
-
-    // Bot Logic
-    const makeBotMove = useCallback(() => {
-        if (gameStatus !== 'playing') return;
-
-        // Find all black pieces
-        const blackPieces = [];
+    loadFEN(fen) {
+        const parts = fen.split(' ');
+        let rows = parts[0].split('/');
+        this.board.fill(null);
         for (let r = 0; r < 8; r++) {
-            for (let c = 0; c < 8; c++) {
-                const piece = board[r][c];
-                if (piece && isBlack(piece)) {
-                    blackPieces.push({ r, c, piece });
+            let c = 0;
+            for (let char of rows[r]) {
+                if (/\d/.test(char)) {
+                    c += parseInt(char);
+                } else {
+                    const color = (char === char.toUpperCase()) ? WHITE : BLACK;
+                    const type = { p: PAWN, n: KNIGHT, b: BISHOP, r: ROOK, q: QUEEN, k: KING }[char.toLowerCase()];
+                    this.board[r * 8 + c] = { type, color };
+                    c++;
                 }
             }
         }
+        this.turn = (parts[1] === 'w') ? WHITE : BLACK;
+        this.history = [];
+    }
 
-        // Find all valid moves for all black pieces
-        let allMoves = [];
-        blackPieces.forEach(({ r, c, piece }) => {
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 8; j++) {
-                    if (isValidMove(r, c, i, j, piece, board)) {
-                        const target = board[i][j];
-                        const score = target ? PIECE_VALUES[target] : 0;
-                        allMoves.push({ startR: r, startC: c, endR: i, endC: j, score });
+    generateMoves(color = this.turn) {
+        const moves = [];
+        for (let i = 0; i < 64; i++) {
+            const p = this.board[i];
+            if (p && p.color === color) {
+                this.getPieceMoves(i, p, moves);
+            }
+        }
+        return moves;
+    }
+
+    getPieceMoves(idx, piece, moves) {
+        const r = Math.floor(idx / 8);
+        const c = idx % 8;
+        const dirs = {
+            [KNIGHT]: [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]],
+            [BISHOP]: [[-1, -1], [-1, 1], [1, -1], [1, 1]],
+            [ROOK]: [[-1, 0], [1, 0], [0, -1], [0, 1]],
+            [QUEEN]: [[-1, -1], [-1, 1], [1, -1], [1, 1], [-1, 0], [1, 0], [0, -1], [0, 1]],
+            [KING]: [[-1, -1], [-1, 1], [1, -1], [1, 1], [-1, 0], [1, 0], [0, -1], [0, 1]]
+        };
+
+        const isSliding = [BISHOP, ROOK, QUEEN].includes(piece.type);
+
+        if (piece.type === PAWN) {
+            const forward = (piece.color === WHITE) ? -1 : 1;
+            const startRow = (piece.color === WHITE) ? 6 : 1;
+
+            const f1 = idx + forward * 8;
+            if (f1 >= 0 && f1 < 64 && !this.board[f1]) {
+                moves.push({ from: idx, to: f1, type: 'move' });
+                const f2 = idx + forward * 16;
+                if (r === startRow && !this.board[f2]) {
+                    moves.push({ from: idx, to: f2, type: 'move' });
+                }
+            }
+
+            for (let dc of [-1, 1]) {
+                if (c + dc >= 0 && c + dc < 8) {
+                    const target = idx + forward * 8 + dc;
+                    const targetP = this.board[target];
+                    if (targetP && targetP.color !== piece.color) {
+                        moves.push({ from: idx, to: target, type: 'capture' });
                     }
                 }
             }
+        } else {
+            const directions = dirs[piece.type];
+            for (let d of directions) {
+                let nr = r + d[0];
+                let nc = c + d[1];
+                while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+                    const target = nr * 8 + nc;
+                    const targetP = this.board[target];
+                    if (!targetP) {
+                        moves.push({ from: idx, to: target, type: 'move' });
+                    } else {
+                        if (targetP.color !== piece.color) {
+                            moves.push({ from: idx, to: target, type: 'capture' });
+                        }
+                        break;
+                    }
+                    if (!isSliding) break;
+                    nr += d[0];
+                    nc += d[1];
+                }
+            }
+        }
+    }
+
+    isSquareAttacked(sq, color) {
+        const opponent = (color === WHITE) ? BLACK : WHITE;
+
+        if (color === WHITE) {
+            if (sq - 9 >= 0 && (sq % 8) > 0 && this.board[sq - 9]?.type === PAWN && this.board[sq - 9].color === BLACK) return true;
+            if (sq - 7 >= 0 && (sq % 8) < 7 && this.board[sq - 7]?.type === PAWN && this.board[sq - 7].color === BLACK) return true;
+        } else {
+            if (sq + 9 < 64 && (sq % 8) < 7 && this.board[sq + 9]?.type === PAWN && this.board[sq + 9].color === WHITE) return true;
+            if (sq + 7 < 64 && (sq % 8) > 0 && this.board[sq + 7]?.type === PAWN && this.board[sq + 7].color === WHITE) return true;
+        }
+
+        const dirs = [
+            [-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1],
+            [-1, -1], [-1, 1], [1, -1], [1, 1],
+            [-1, 0], [1, 0], [0, -1], [0, 1]
+        ];
+
+        const r = Math.floor(sq / 8);
+        const c = sq % 8;
+
+        for (let i = 0; i < dirs.length; i++) {
+            const d = dirs[i];
+            let nr = r + d[0];
+            let nc = c + d[1];
+            let dist = 0;
+            while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+                dist++;
+                const target = nr * 8 + nc;
+                const p = this.board[target];
+                if (p) {
+                    if (p.color === opponent) {
+                        if (i < 8) {
+                            if (p.type === KNIGHT && dist === 1) return true;
+                        } else if (i < 12) {
+                            if ((p.type === BISHOP || p.type === QUEEN) || (p.type === KING && dist === 1)) return true;
+                        } else {
+                            if ((p.type === ROOK || p.type === QUEEN) || (p.type === KING && dist === 1)) return true;
+                        }
+                    }
+                    break;
+                }
+                nr += d[0];
+                nc += d[1];
+            }
+        }
+        return false;
+    }
+
+    makeMove(move) {
+        const state = {
+            board: [...this.board],
+            turn: this.turn
+        };
+
+        const p = this.board[move.from];
+        this.board[move.to] = p;
+        this.board[move.from] = null;
+
+        if (p.type === PAWN && (move.to < 8 || move.to >= 56)) {
+            this.board[move.to] = { type: QUEEN, color: p.color };
+        }
+
+        this.turn = (this.turn === WHITE) ? BLACK : WHITE;
+        this.history.push(state);
+        return state;
+    }
+
+    undoMove() {
+        const state = this.history.pop();
+        if (!state) return;
+        this.board = state.board;
+        this.turn = state.turn;
+    }
+
+    getLegalMoves(color = this.turn) {
+        const pseudo = this.generateMoves(color);
+        const legal = [];
+        for (let m of pseudo) {
+            this.makeMove(m);
+            let kingIdx = -1;
+            for (let i = 0; i < 64; i++) {
+                if (this.board[i] && this.board[i].type === KING && this.board[i].color === color) {
+                    kingIdx = i;
+                    break;
+                }
+            }
+            if (kingIdx !== -1 && !this.isSquareAttacked(kingIdx, color)) {
+                legal.push(m);
+            }
+            this.undoMove();
+        }
+        return legal;
+    }
+
+    isCheck(color = this.turn) {
+        let kingIdx = -1;
+        for (let i = 0; i < 64; i++) {
+            if (this.board[i] && this.board[i].type === KING && this.board[i].color === color) {
+                kingIdx = i;
+                break;
+            }
+        }
+        return (kingIdx !== -1 && this.isSquareAttacked(kingIdx, color));
+    }
+
+    checkGameState() {
+        const moves = this.getLegalMoves(this.turn);
+        if (moves.length === 0) {
+            if (this.isCheck(this.turn)) return 'checkmate';
+            return 'stalemate';
+        }
+        return null;
+    }
+}
+
+// AI with Minimax
+class ChessAI {
+    constructor(game) {
+        this.game = game;
+        this.weights = { [PAWN]: 100, [KNIGHT]: 320, [BISHOP]: 330, [ROOK]: 500, [QUEEN]: 900, [KING]: 20000 };
+
+        const pawnTable = [
+            0, 0, 0, 0, 0, 0, 0, 0,
+            50, 50, 50, 50, 50, 50, 50, 50,
+            10, 10, 20, 30, 30, 20, 10, 10,
+            5, 5, 10, 25, 25, 10, 5, 5,
+            0, 0, 0, 20, 20, 0, 0, 0,
+            5, -5, -10, 0, 0, -10, -5, 5,
+            5, 10, 10, -20, -20, 10, 10, 5,
+            0, 0, 0, 0, 0, 0, 0, 0
+        ];
+        const knightTable = [
+            -50, -40, -30, -30, -30, -30, -40, -50,
+            -40, -20, 0, 0, 0, 0, -20, -40,
+            -30, 0, 10, 15, 15, 10, 0, -30,
+            -30, 5, 15, 20, 20, 15, 5, -30,
+            -30, 0, 15, 20, 20, 15, 0, -30,
+            -30, 5, 10, 15, 15, 10, 5, -30,
+            -40, -20, 0, 5, 5, 0, -20, -40,
+            -50, -40, -30, -30, -30, -30, -40, -50
+        ];
+        const mirror = (table) => {
+            const newT = [];
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) newT.push(table[(7 - r) * 8 + c]);
+            }
+            return newT;
+        };
+
+        this.pst = {
+            [WHITE]: { [PAWN]: pawnTable, [KNIGHT]: knightTable, [BISHOP]: knightTable },
+            [BLACK]: { [PAWN]: mirror(pawnTable), [KNIGHT]: mirror(knightTable), [BISHOP]: mirror(knightTable) }
+        };
+    }
+
+    evaluate() {
+        let score = 0;
+        for (let i = 0; i < 64; i++) {
+            const p = this.game.board[i];
+            if (!p) continue;
+            let val = this.weights[p.type];
+            if (this.pst[p.color][p.type]) {
+                val += this.pst[p.color][p.type][i] || 0;
+            }
+
+            if (p.color === WHITE) score += val;
+            else score -= val;
+        }
+        return score;
+    }
+
+    getBestMove(depth) {
+        const moves = this.game.getLegalMoves();
+        if (moves.length === 0) return null;
+
+        moves.sort((a, b) => {
+            const scoreA = (a.type === 'capture' ? 10 : 0);
+            const scoreB = (b.type === 'capture' ? 10 : 0);
+            return scoreB - scoreA;
         });
 
-        if (allMoves.length === 0) {
-            setGameStatus('checkmate'); // Or stalemate, but simplifying
-            return;
+        let bestMove = moves[0];
+        let bestValue = -Infinity;
+
+        for (const move of moves) {
+            this.game.makeMove(move);
+            const value = -this.minimax(depth - 1, -Infinity, Infinity);
+            this.game.undoMove();
+
+            if (value > bestValue) {
+                bestValue = value;
+                bestMove = move;
+            }
+        }
+        return bestMove;
+    }
+
+    minimax(depth, alpha, beta) {
+        if (depth === 0) return (this.game.turn === WHITE ? 1 : -1) * this.evaluate();
+
+        const moves = this.game.getLegalMoves();
+        if (moves.length === 0) {
+            if (this.game.isCheck()) return -20000 + (10 - depth);
+            return 0;
         }
 
-        // Sort moves by score (capture high value pieces first)
-        allMoves.sort((a, b) => b.score - a.score);
+        let best = -Infinity;
+        for (const move of moves) {
+            this.game.makeMove(move);
+            const val = -this.minimax(depth - 1, -beta, -alpha);
+            this.game.undoMove();
 
-        // Filter for top moves (best captures) or random if no captures
-        const bestScore = allMoves[0].score;
-        const bestMoves = allMoves.filter(m => m.score === bestScore);
-        const selectedMove = bestMoves[Math.floor(Math.random() * bestMoves.length)];
-
-        // Execute move
-        const newBoard = board.map(row => [...row]);
-        newBoard[selectedMove.endR][selectedMove.endC] = board[selectedMove.startR][selectedMove.startC];
-        newBoard[selectedMove.startR][selectedMove.startC] = null;
-
-        // Promotion (Auto Queen)
-        if (newBoard[selectedMove.endR][selectedMove.endC] === 'p' && selectedMove.endR === 7) {
-            newBoard[selectedMove.endR][selectedMove.endC] = 'q';
+            best = Math.max(best, val);
+            alpha = Math.max(alpha, val);
+            if (alpha >= beta) break;
         }
+        return best;
+    }
+}
 
+const ChessGame = () => {
+    const [board, setBoard] = useState([]);
+    const [turn, setTurn] = useState('white');
+    const [selected, setSelected] = useState(null);
+    const [possibleMoves, setPossibleMoves] = useState([]);
+    const [gameStatus, setGameStatus] = useState('playing');
+    const [difficulty, setDifficulty] = useState('medium');
+    const [logic] = useState(() => new ChessLogic());
+    const [ai] = useState(() => new ChessAI(logic));
+
+    const syncBoard = useCallback(() => {
+        const newBoard = [];
+        for (let r = 0; r < 8; r++) {
+            const row = [];
+            for (let c = 0; c < 8; c++) {
+                const piece = logic.board[r * 8 + c];
+                if (piece) {
+                    const colorKey = piece.color === WHITE ? 'w' : 'b';
+                    const typeKey = { [PAWN]: 'p', [KNIGHT]: 'n', [BISHOP]: 'b', [ROOK]: 'r', [QUEEN]: 'q', [KING]: 'k' }[piece.type];
+                    row.push(colorKey === 'w' ? typeKey.toUpperCase() : typeKey);
+                } else {
+                    row.push(null);
+                }
+            }
+            newBoard.push(row);
+        }
         setBoard(newBoard);
-        setTurn('white');
-    }, [board, gameStatus]);
+        setTurn(logic.turn === WHITE ? 'white' : 'black');
+    }, [logic]);
 
-    // Trigger Bot Move
+    useEffect(() => {
+        syncBoard();
+    }, [syncBoard]);
+
+    const makeBotMove = useCallback(() => {
+        if (gameStatus !== 'playing' || logic.turn !== BLACK) return;
+
+        setTimeout(() => {
+            const depth = difficulty === 'easy' ? 1 : difficulty === 'medium' ? 2 : 3;
+            const move = ai.getBestMove(depth);
+
+            if (move) {
+                logic.makeMove(move);
+                syncBoard();
+
+                const state = logic.checkGameState();
+                if (state === 'checkmate') {
+                    setGameStatus('lost');
+                } else if (state === 'stalemate') {
+                    setGameStatus('draw');
+                }
+            }
+        }, 500);
+    }, [logic, ai, difficulty, gameStatus, syncBoard]);
+
     useEffect(() => {
         if (turn === 'black' && gameStatus === 'playing') {
-            const timer = setTimeout(() => {
-                makeBotMove();
-            }, 500);
-            return () => clearTimeout(timer);
+            makeBotMove();
         }
     }, [turn, gameStatus, makeBotMove]);
 
     const handleSquareClick = (r, c) => {
         if (turn !== 'white' || gameStatus !== 'playing') return;
 
-        const piece = board[r][c];
-        const isOwnPiece = piece && isWhite(piece);
+        const idx = r * 8 + c;
+        const piece = logic.board[idx];
 
-        if (isOwnPiece) {
+        if (piece && piece.color === WHITE) {
             setSelected({ r, c });
-            const moves = [];
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 8; j++) {
-                    if (isValidMove(r, c, i, j, piece, board)) {
-                        moves.push(`${i},${j}`);
-                    }
-                }
-            }
-            setPossibleMoves(moves);
+            const moves = logic.getLegalMoves().filter(m => m.from === idx);
+            setPossibleMoves(moves.map(m => `${Math.floor(m.to / 8)},${m.to % 8}`));
         } else if (selected) {
-            if (possibleMoves.includes(`${r},${c}`)) {
-                // Move
-                const newBoard = board.map(row => [...row]);
-                newBoard[r][c] = board[selected.r][selected.c];
-                newBoard[selected.r][selected.c] = null;
+            const fromIdx = selected.r * 8 + selected.c;
+            const toIdx = r * 8 + c;
+            const move = logic.getLegalMoves().find(m => m.from === fromIdx && m.to === toIdx);
 
-                // Promotion (Auto Queen)
-                if (newBoard[r][c] === 'P' && r === 0) {
-                    newBoard[r][c] = 'Q';
+            if (move) {
+                logic.makeMove(move);
+                syncBoard();
+
+                const state = logic.checkGameState();
+                if (state === 'checkmate') {
+                    setGameStatus('won');
+                } else if (state === 'stalemate') {
+                    setGameStatus('draw');
                 }
 
-                setBoard(newBoard);
-                setTurn('black');
                 setSelected(null);
                 setPossibleMoves([]);
             } else {
@@ -202,8 +434,8 @@ const ChessGame = () => {
     };
 
     const resetGame = () => {
-        setBoard(initialBoard);
-        setTurn('white');
+        logic.reset();
+        syncBoard();
         setSelected(null);
         setPossibleMoves([]);
         setGameStatus('playing');
@@ -211,13 +443,27 @@ const ChessGame = () => {
 
     return (
         <div className="chess-container">
-            <div className="status">
-                {gameStatus === 'playing' ? (
-                    <>Turn: <span className={turn}>{turn === 'white' ? 'You (White)' : 'Bot (Black)'}</span></>
-                ) : (
-                    <span className="game-over">Game Over!</span>
-                )}
+            <div className="chess-header">
+                <div className="status">
+                    {gameStatus === 'playing' ? (
+                        <>Turn: <span className={turn}>{turn === 'white' ? 'You (White)' : 'Bot (Black)'}</span></>
+                    ) : (
+                        <span className={`game-over ${gameStatus}`}>
+                            {gameStatus === 'won' ? 'You Won! 🏆' : gameStatus === 'lost' ? 'You Lost 💀' : 'Draw 🤝'}
+                        </span>
+                    )}
+                </div>
+
+                <div className="difficulty-selector">
+                    <label>Difficulty:</label>
+                    <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} disabled={gameStatus !== 'playing' && turn === 'black'}>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
             </div>
+
             <div className="chess-board">
                 {board.map((row, r) => (
                     <div key={r} className="chess-row">
@@ -232,7 +478,7 @@ const ChessGame = () => {
                                     className={`chess-square ${isBlackSquare ? 'black' : 'white'} ${isSelected ? 'selected' : ''} ${isPossible ? 'possible' : ''}`}
                                     onClick={() => handleSquareClick(r, c)}
                                 >
-                                    {piece && <span className={`chess-piece ${getPieceColor(piece)}`}>{PIECES[piece]}</span>}
+                                    {piece && <span className={`chess-piece ${piece === piece.toUpperCase() ? 'white' : 'black'}`}>{PIECES[piece]}</span>}
                                     {isPossible && !piece && <div className="move-dot"></div>}
                                 </div>
                             );
