@@ -19,7 +19,8 @@ app.set('trust proxy', 1);
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        'https://jack-fes-schedule.vercel.app'
+        'https://jack-fes-schedule.vercel.app',
+        'https://www.jackjack.cc/'
     ],
     credentials: true
 })); 
