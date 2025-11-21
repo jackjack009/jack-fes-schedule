@@ -17,10 +17,10 @@ const FlappyBird = () => {
 
     const BIRD_SIZE = 34;
     const PIPE_WIDTH = 52;
-    const PIPE_GAP = 180; // Increased from 150 for easier gameplay
-    const GRAVITY = 0.4; // Reduced from 0.6 for slower falling
-    const JUMP_STRENGTH = -7; // Reduced from -9 for gentler jumps
-    const PIPE_SPEED = 1.8; // Reduced from 2 for more reaction time
+    const PIPE_GAP = 200; // Increased from 150 for easier gameplay
+    const GRAVITY = 0.6; // Increased for faster falling
+    const JUMP_STRENGTH = -9; // Increased for stronger jumps
+    const PIPE_SPEED = 2.5; // Fast gameplay
     const GAME_WIDTH = 400;
     const GAME_HEIGHT = 600;
 
