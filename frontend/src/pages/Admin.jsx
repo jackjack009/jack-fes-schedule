@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { authAPI, datesAPI } from '../services/api';
+import { useData } from '../context/DataContext';
 import './Admin.css';
 
 const Admin = () => {
+    const { refreshDates } = useData(); // Get refresh function from context
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -92,6 +94,7 @@ const Admin = () => {
             await datesAPI.create({ name: newDateName });
             setNewDateName('');
             await fetchDates();
+            await refreshDates();
         } catch (err) {
             console.error('Error creating date:', err);
             setError('Failed to create date');
@@ -106,6 +109,7 @@ const Admin = () => {
             setEditingId(null);
             setEditingName('');
             await fetchDates();
+            await refreshDates();
         } catch (err) {
             console.error('Error updating date:', err);
             setError('Failed to update date');
@@ -121,6 +125,7 @@ const Admin = () => {
         try {
             await datesAPI.delete(id);
             await fetchDates();
+            await refreshDates();
         } catch (err) {
             console.error('Error deleting date:', err);
             setError('Failed to delete date');
@@ -128,12 +133,21 @@ const Admin = () => {
     };
 
     const handleToggleSlot = async (dateId, slotId) => {
+        console.log('Toggle slot called:', { dateId, slotId });
         try {
-            await datesAPI.toggleSlot(dateId, slotId);
-            await fetchDates();
+            setError('');
+            console.log('Calling API...');
+            const response = await datesAPI.toggleSlot(dateId, slotId);
+            console.log('API response:', response);
+            await fetchDates(); // Refresh admin page data
+            await refreshDates(); // Refresh global context (for Calendar page)
+            console.log('Dates refreshed');
         } catch (err) {
             console.error('Error toggling slot:', err);
-            setError('Failed to toggle slot');
+            console.error('Error response:', err.response);
+            const errorMsg = err.response?.data?.message || 'Failed to toggle slot';
+            setError(errorMsg);
+            setTimeout(() => setError(''), 3000);
         }
     };
 
@@ -148,6 +162,7 @@ const Admin = () => {
 
         try {
             await datesAPI.reorder(items.map(d => d._id));
+            await refreshDates();
         } catch (err) {
             console.error('Error reordering dates:', err);
             fetchDates(); // Revert on error

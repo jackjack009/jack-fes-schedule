@@ -31,8 +31,8 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: true, // Always true for cross-site (Render is HTTPS)
-        sameSite: 'none', // Required for cross-site cookies
+        secure: process.env.NODE_ENV === 'production', // Only secure in production
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'lax' for localhost
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
@@ -59,14 +59,17 @@ const startServer = async () => {
         console.log('🗑️ Removed old "admin" user if existed');
 
         // Check if default admin exists
-        const adminExists = await Admin.findOne({ username: 'jackjack' });
+        const adminUsername = process.env.ADMIN_USERNAME || 'jackjack';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'jackjack00900';
+
+        const adminExists = await Admin.findOne({ username: adminUsername });
         if (!adminExists) {
             const defaultAdmin = new Admin({
-                username: 'jackjack',
-                password: 'jackjack00900'
+                username: adminUsername,
+                password: adminPassword
             });
             await defaultAdmin.save();
-            console.log('✅ Default admin created (username: jackjack, password: jackjack00900)');
+            console.log(`✅ Default admin created (username: ${adminUsername})`);
         }
 
         // Start server
