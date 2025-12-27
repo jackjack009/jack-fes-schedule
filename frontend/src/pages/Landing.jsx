@@ -76,11 +76,11 @@ const Landing = () => {
                             </p>
                             <div className="stats">
                                 <div className="stat-item">
-                                    <h4>~200</h4>
+                                    <h4>200+</h4>
                                     <p>Khách iu hài hòng</p>
                                 </div>
                                 <div className="stat-item">
-                                    <h4>~100</h4>
+                                    <h4>50+</h4>
                                     <p>Fes đã từng có dấu chân</p>
                                 </div>
                                 <div className="stat-item">
