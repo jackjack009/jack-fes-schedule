@@ -96,7 +96,7 @@ const Contact = () => {
                         {/* Social & Message Combined */}
                         <div className="contact-card social-card">
                             <h3>📱 Follow & Message</h3>
-                            <p>Theo dõi để hành hung Jack Jack nào!</p>
+                            <p>Theo dõi để nấu xói Jack Jack nào!</p>
 
                             <div className="social-section">
                                 <h4>Follow Me</h4>

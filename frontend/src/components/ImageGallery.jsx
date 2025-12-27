@@ -25,13 +25,13 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
             const folderId = extractFolderId(url);
 
             if (!folderId) {
-                throw new Error('Invalid Google Drive URL');
+                throw new Error('Sai URL rồi, vui lòng nhắn tin cho JackJack');
             }
 
             const apiKey = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY;
 
             if (!apiKey) {
-                throw new Error('Google Drive API key not found. Add VITE_GOOGLE_DRIVE_API_KEY to your .env file');
+                throw new Error('Í ẹ thiếu API key, vui lòng nhắn tin cho JackJack');
             }
 
             const apiUrl = `https://www.googleapis.com/drive/v3/files?` +
@@ -49,7 +49,7 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
             const data = await response.json();
 
             if (data.error) {
-                throw new Error(data.error.message || 'Failed to fetch images from Google Drive');
+                throw new Error(data.error.message || 'Không load được ảnh, vui lòng nhắn tin cho JackJack');
             }
 
             if (data.files && data.files.length > 0) {
@@ -68,7 +68,7 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
                 setError(null);
             } else {
                 setImages([]);
-                setError('No images found in this Google Drive folder');
+                setError('Folder không có miếng ảnh nào luôn, vui lòng nhắn tin cho JackJack');
             }
         } catch (err) {
             console.error('Error fetching from Google Drive:', err);
@@ -145,13 +145,13 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
             {loading ? (
                 <div className="loading-container">
                     <div className="spinner"></div>
-                    <p>Loading images from Google Drive...</p>
+                    <p>Ảnh đang load nè...</p>
                 </div>
             ) : error ? (
                 <div className="error-container">
                     <p className="error-message">⚠️ {error}</p>
                     {images.length > 0 && (
-                        <p className="fallback-message">Showing local images instead</p>
+                        <p className="fallback-message">Ảnh không load được, vui lòng nhắn tin cho JackJack</p>
                     )}
                 </div>
             ) : null}
