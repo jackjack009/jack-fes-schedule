@@ -69,7 +69,7 @@ const Header = () => {
                     </Link>
 
                     <Link to="/contact" className={`nav-link ${isActive('/contact') ? 'active' : ''}`}>
-                        Contact
+                        Price/Contact
                     </Link>
 
                     <Link to="/admin" className={`nav-link ${isActive('/admin') ? 'active' : ''}`}>

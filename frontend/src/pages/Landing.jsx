@@ -20,7 +20,7 @@ const Landing = () => {
                                 Ngó samples
                             </Link>
                             <Link to="/contact" className="btn btn-secondary">
-                                Liên hệ
+                                Ngó giá cả
                             </Link>
                         </div>
                     </div>
@@ -50,7 +50,7 @@ const Landing = () => {
                     <div className="about-content">
                         <div className="about-image">
                             <img
-                                src="/images/portrait.jpg"
+                                src="/images/portrait.png"
                                 alt="Jack Portrait"
                                 className="portrait-photo"
                                 onError={(e) => {

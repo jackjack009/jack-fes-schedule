@@ -48,6 +48,43 @@ export const DataProvider = ({ children }) => {
         return () => clearTimeout(timer);
     }, []);
 
+    // Keep backend alive (prevent Render cold starts)
+    useEffect(() => {
+        const KEEP_ALIVE_INTERVAL = 10 * 60 * 1000; // 10 minutes
+        const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+
+        const keepAlive = setInterval(async () => {
+            try {
+                // Ping health endpoint to keep backend awake
+                await fetch(`${API_BASE_URL}/api/health`, {
+                    method: 'GET',
+                    cache: 'no-cache'
+                });
+                console.log('✅ Backend keep-alive ping sent');
+            } catch (err) {
+                console.log('⚠️ Keep-alive ping failed (backend may be sleeping)');
+            }
+        }, KEEP_ALIVE_INTERVAL);
+
+        // Send initial ping after 30 seconds
+        const initialPing = setTimeout(async () => {
+            try {
+                await fetch(`${API_BASE_URL}/api/health`, {
+                    method: 'GET',
+                    cache: 'no-cache'
+                });
+                console.log('✅ Initial keep-alive ping sent');
+            } catch (err) {
+                console.log('⚠️ Initial ping failed');
+            }
+        }, 30000);
+
+        return () => {
+            clearInterval(keepAlive);
+            clearTimeout(initialPing);
+        };
+    }, []);
+
     const value = {
         dates,
         loading,
