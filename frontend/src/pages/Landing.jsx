@@ -50,7 +50,7 @@ const Landing = () => {
                     <div className="about-content">
                         <div className="about-image">
                             <img
-                                src="/images/portrait.png"
+                                src="/images/portrait.jpg"
                                 alt="Jack Portrait"
                                 className="portrait-photo"
                                 onError={(e) => {

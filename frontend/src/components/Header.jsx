@@ -1,15 +1,34 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import './Header.css';
 
 const Header = () => {
     const { theme, toggleTheme } = useTheme();
     const [showSamplesMenu, setShowSamplesMenu] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const timeoutRef = useRef(null);
     const location = useLocation();
 
     const isActive = (path) => location.pathname === path;
+
+    // Close mobile menu when route changes
+    useEffect(() => {
+        setMobileMenuOpen(false);
+        setShowSamplesMenu(false);
+    }, [location.pathname]);
+
+    // Prevent body scroll when mobile menu is open
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [mobileMenuOpen]);
 
     const handleMouseEnter = () => {
         if (timeoutRef.current) {
@@ -24,6 +43,14 @@ const Header = () => {
         }, 200);
     };
 
+    const toggleMobileMenu = () => {
+        setMobileMenuOpen(!mobileMenuOpen);
+    };
+
+    const toggleSamplesMenuMobile = () => {
+        setShowSamplesMenu(!showSamplesMenu);
+    };
+
     return (
         <header className="main-header">
             <div className="header-container">
@@ -31,14 +58,30 @@ const Header = () => {
                     JACKJACK
                 </Link>
 
-                <nav className="main-nav">
+                {/* Hamburger Button */}
+                <button
+                    className={`hamburger ${mobileMenuOpen ? 'active' : ''}`}
+                    onClick={toggleMobileMenu}
+                    aria-label="Toggle menu"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                {/* Desktop Navigation */}
+                <nav className={`main-nav ${mobileMenuOpen ? 'mobile-open' : ''}`}>
                     <div
                         className="nav-item-wrapper"
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                     >
-                        <span className={`nav-link ${location.pathname.startsWith('/samples') ? 'active' : ''}`}>
+                        <span
+                            className={`nav-link ${location.pathname.startsWith('/samples') ? 'active' : ''}`}
+                            onClick={toggleSamplesMenuMobile}
+                        >
                             Samples
+                            <span className="dropdown-arrow">{showSamplesMenu ? '▲' : '▼'}</span>
                         </span>
                         {showSamplesMenu && (
                             <div className="submenu">
@@ -80,6 +123,14 @@ const Header = () => {
                         {theme === 'light' ? '🌙' : '☀️'}
                     </button>
                 </nav>
+
+                {/* Mobile Menu Overlay */}
+                {mobileMenuOpen && (
+                    <div
+                        className="mobile-overlay"
+                        onClick={toggleMobileMenu}
+                    />
+                )}
             </div>
         </header>
     );

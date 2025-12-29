@@ -1,23 +1,33 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import Admin from '../models/Admin.js';
 
 const router = express.Router();
 
+// Rate limiter for login attempts
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 login requests per windowMs
+    message: 'Đã bảo đừng có cố gắng quá rồi mà. Cho lên bảng 15 phút!',
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
 // Login
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
     try {
         const { username, password } = req.body;
 
         // Find admin
         const admin = await Admin.findOne({ username });
         if (!admin) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ message: 'Sai rồi bạn ơi. Đừng có đoán mò nữa.' });
         }
 
         // Check password
         const isMatch = await admin.comparePassword(password);
         if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ message: 'Vẫn cứ là sai thôi' });
         }
 
         // Set session

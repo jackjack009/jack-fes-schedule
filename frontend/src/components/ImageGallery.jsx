@@ -170,6 +170,44 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
                                 alt={image.alt}
                                 className="gallery-image"
                                 loading="lazy"
+                                onError={(e) => {
+                                    // Try alternative URL formats if primary fails
+                                    const currentSrc = e.target.src;
+
+                                    // First fallback: Try direct Google Drive link
+                                    if (currentSrc.includes('lh3.googleusercontent.com')) {
+                                        e.target.src = `https://drive.google.com/uc?export=view&id=${image.id}`;
+                                    }
+                                    // Second fallback: Try thumbnail
+                                    else if (currentSrc.includes('drive.google.com/uc')) {
+                                        e.target.src = image.thumbnail || '';
+                                    }
+                                    // Final fallback: Show error state
+                                    else {
+                                        e.target.style.display = 'none';
+                                        e.target.parentElement.innerHTML = `
+                                            <div style="
+                                                display: flex;
+                                                flex-direction: column;
+                                                align-items: center;
+                                                justify-content: center;
+                                                height: 100%;
+                                                background: var(--bg-secondary);
+                                                border-radius: 12px;
+                                                padding: 1rem;
+                                                text-align: center;
+                                            ">
+                                                <span style="font-size: 2rem; margin-bottom: 0.5rem;">📷</span>
+                                                <span style="font-size: 0.9rem; color: var(--text-secondary);">
+                                                    ${image.alt}
+                                                </span>
+                                                <span style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                                                    Ảnh load lỗi
+                                                </span>
+                                            </div>
+                                        `;
+                                    }
+                                }}
                             />
                         </div>
                     </div>
