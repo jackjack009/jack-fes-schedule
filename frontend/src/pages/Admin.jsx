@@ -48,7 +48,12 @@ const Admin = () => {
             setUsername('');
             setPassword('');
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed');
+            // Handle rate limit error (429) or other errors
+            const errorMessage = err.response?.data?.message ||
+                err.response?.data ||
+                err.message ||
+                'Login failed';
+            setError(errorMessage);
         }
     };
 
