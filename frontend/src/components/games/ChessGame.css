@@ -113,11 +113,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(1.2rem, 8vw, 2.5rem);
+    font-size: clamp(1rem, 9vw, 2.5rem);
     /* Responsive piece size */
     cursor: pointer;
     position: relative;
     transition: transform 0.1s;
+    overflow: hidden;
+    /* Prevent spillover */
 }
 
 .chess-square:hover {
