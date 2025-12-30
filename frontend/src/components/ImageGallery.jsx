@@ -135,6 +135,34 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [lightboxOpen, images.length]);
 
+    // Touch navigation logic
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+    const minSwipeDistance = 50;
+
+    const handleTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchMove = (e) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe) {
+            nextImage();
+        } else if (isRightSwipe) {
+            prevImage();
+        }
+    };
+
     return (
         <div className="gallery-page">
             <div className="gallery-header">
@@ -251,7 +279,13 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
 
             {/* Lightbox Modal */}
             {lightboxOpen && images.length > 0 && (
-                <div className="lightbox-overlay" onClick={closeLightbox}>
+                <div
+                    className="lightbox-overlay"
+                    onClick={closeLightbox}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                >
                     <button className="lightbox-close" onClick={closeLightbox}>
                         ×
                     </button>
