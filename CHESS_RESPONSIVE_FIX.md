@@ -9,15 +9,17 @@
 
 I optimized the layout to maximize board size and fixed the font rendering for the classic chess icons.
 
-### **1. Spacing Optimization (Fix for "Too Small")**
+### **1. Spacing & Layout Optimization**
 
-I drastically reduced padding on mobile to reclaim horizontal space:
+I fixed the layout to ensure the board uses all available space:
 
-- **Calendar Wrapper:** `2rem` (32px) → `0.5rem` (8px).
-- **Game Section:** `20px` → `10px`.
-- **Chess Container:** `20px` → `5px`.
+- **Full Width Trigger:** Added `width: 100%` to `.chess-container`. Without this, the flex layout was causing the board to "shrink-wrap" and look tiny.
+- **Reduced Padding:** Drastically reduced padding on mobile:
+  - **Calendar Wrapper:** `2rem` (32px) → `0.5rem` (8px).
+  - **Game Section:** `20px` → `10px`.
+  - **Chess Container:** `20px` → `5px`.
 
-**Result:** The board is now significantly larger and wider on mobile screens (almost edge-to-edge).
+**Result:** The board now expands to fill the screen width on mobile, respecting a comfortable max-width on desktop.
 
 ### **2. Font Rendering Fix (Fix for "Clipping")**
 
