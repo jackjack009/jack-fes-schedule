@@ -39,6 +39,16 @@ I've updated the CSS to use **modern responsive units** instead of fixed pixels 
 - **Mobile:** Fills the width of the screen perfectly with correct padding.
 - **Small Mobile:** Even on very small screens, pieces stay contained and readable.
 
+### **Spacing Optimization (Fix for "Too Small" Board)**
+
+The board looked too small on mobile because of stacked padding from multiple containers. I reduced this drastically:
+
+1. **`Calendar.css`**: Reduced `.games-container-wrapper` padding from `2rem` (32px) to `0.5rem` (8px).
+2. **`GameSection.css`**: Reduced `.game-content` padding from `20px` to `10px`.
+3. **`ChessGame.css`**: Reduced `.chess-container` padding from `20px` to `5px`.
+
+**Total padding removed:** ~100px of horizontal wasted space! 🚀
+
 ---
 
 ## 📱 **How to Test**

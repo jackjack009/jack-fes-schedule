@@ -239,6 +239,11 @@
 }
 
 @media (max-width: 500px) {
+    .chess-container {
+        padding: 5px;
+        gap: 15px;
+    }
+
     .chess-header {
         flex-direction: column;
         gap: 12px;
