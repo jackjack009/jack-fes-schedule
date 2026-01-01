@@ -1,11 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import './Game2048.css';
 
 const Game2048 = () => {
     const [board, setBoard] = useState(Array(4).fill().map(() => Array(4).fill(0)));
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
-    const [touchStart, setTouchStart] = useState(null);
+
+    // Use ref for touch tracking to avoid stale closures in event listeners
+    const touchStartRef = useRef(null);
+    const boardRef = useRef(null);
 
     const initializeGame = () => {
         const newBoard = Array(4).fill().map(() => Array(4).fill(0));
@@ -103,6 +106,7 @@ const Game2048 = () => {
         initializeGame();
     }, []);
 
+    // Keyboard controls
     useEffect(() => {
         const handleKeyDown = (e) => {
             switch (e.key) {
@@ -119,41 +123,68 @@ const Game2048 = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [move]);
 
-    // Touch Handlers
-    const handleTouchStart = (e) => {
-        e.preventDefault(); // Prevent page scrolling
-        setTouchStart({
-            x: e.touches[0].clientX,
-            y: e.touches[0].clientY
-        });
-    };
+    // Touch Controls (Non-passive listeners to prevent scrolling during swipes)
+    useEffect(() => {
+        const boardElement = boardRef.current;
+        if (!boardElement) return;
 
-    const handleTouchEnd = (e) => {
-        if (!touchStart) return;
-
-        e.preventDefault(); // Prevent page scrolling
-
-        const touchEnd = {
-            x: e.changedTouches[0].clientX,
-            y: e.changedTouches[0].clientY
+        const handleTouchStart = (e) => {
+            // Don't prevent default on touchstart - this blocks clicks/taps
+            touchStartRef.current = {
+                x: e.touches[0].clientX,
+                y: e.touches[0].clientY
+            };
         };
 
-        const dx = touchEnd.x - touchStart.x;
-        const dy = touchEnd.y - touchStart.y;
+        const handleTouchMove = (e) => {
+            // Prevent scrolling during swipe
+            if (touchStartRef.current) {
+                e.preventDefault();
+            }
+        };
 
-        if (Math.abs(dx) > Math.abs(dy)) {
-            // Horizontal swipe
-            if (Math.abs(dx) > 30) { // Threshold
-                move(dx > 0 ? 'right' : 'left');
+        const handleTouchEnd = (e) => {
+            if (!touchStartRef.current) return;
+
+            const touchEnd = {
+                x: e.changedTouches[0].clientX,
+                y: e.changedTouches[0].clientY
+            };
+
+            const dx = touchEnd.x - touchStartRef.current.x;
+            const dy = touchEnd.y - touchStartRef.current.y;
+            const threshold = 30;
+
+            // Only prevent default if it's actually a swipe (not a tap)
+            if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
+                e.preventDefault();
+
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    // Horizontal
+                    if (Math.abs(dx) > threshold) {
+                        move(dx > 0 ? 'right' : 'left');
+                    }
+                } else {
+                    // Vertical
+                    if (Math.abs(dy) > threshold) {
+                        move(dy > 0 ? 'down' : 'up');
+                    }
+                }
             }
-        } else {
-            // Vertical swipe
-            if (Math.abs(dy) > 30) {
-                move(dy > 0 ? 'down' : 'up');
-            }
-        }
-        setTouchStart(null);
-    };
+            touchStartRef.current = null;
+        };
+
+        // Add non-passive listeners
+        boardElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+        boardElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+        boardElement.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+        return () => {
+            boardElement.removeEventListener('touchstart', handleTouchStart);
+            boardElement.removeEventListener('touchmove', handleTouchMove);
+            boardElement.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [move]); // Re-bind if move changes
 
     return (
         <div className="game2048-container">
@@ -167,8 +198,7 @@ const Game2048 = () => {
 
             <div
                 className="board-2048"
-                onTouchStart={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
+                ref={boardRef}
             >
                 {board.map((row, r) => (
                     <div key={r} className="row-2048">
