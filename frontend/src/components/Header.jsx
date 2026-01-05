@@ -78,7 +78,14 @@ const Header = () => {
                     >
                         <span
                             className={`nav-link ${location.pathname.startsWith('/samples') ? 'active' : ''}`}
-                            onClick={toggleSamplesMenuMobile}
+                            onClick={(e) => {
+                                // Only toggle on mobile (when hamburger menu is open)
+                                if (mobileMenuOpen) {
+                                    toggleSamplesMenuMobile();
+                                }
+                                // On desktop, prevent default to avoid any navigation
+                                e.preventDefault();
+                            }}
                         >
                             Samples
                             <span className="dropdown-arrow">{showSamplesMenu ? '▲' : '▼'}</span>
