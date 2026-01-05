@@ -5,6 +5,7 @@ const TicTacToe = () => {
     const [board, setBoard] = useState(Array(9).fill(null));
     const [isPlayerTurn, setIsPlayerTurn] = useState(true); // Player is always X
     const [winner, setWinner] = useState(null);
+    const [moveHistory, setMoveHistory] = useState([]); // Track order of moves
 
     const calculateWinner = (squares) => {
         const lines = [
@@ -53,7 +54,7 @@ const TicTacToe = () => {
     };
 
     const makeBotMove = useCallback(() => {
-        if (winner || !board.includes(null)) return;
+        if (winner) return;
 
         let bestScore = -Infinity;
         let move = -1;
@@ -77,20 +78,24 @@ const TicTacToe = () => {
         }
 
         if (move !== -1) {
+
             const finalBoard = [...board];
+            let newMoveHistory = [...moveHistory];
+
             finalBoard[move] = 'O';
+            newMoveHistory.push(move);
+
             setBoard(finalBoard);
+            setMoveHistory(newMoveHistory);
 
             const gameWinner = calculateWinner(finalBoard);
             if (gameWinner) {
                 setWinner(gameWinner);
-            } else if (!finalBoard.includes(null)) {
-                setWinner('Draw');
             } else {
                 setIsPlayerTurn(true);
             }
         }
-    }, [board, winner]);
+    }, [board, winner, moveHistory]);
 
     useEffect(() => {
         if (!isPlayerTurn && !winner) {
@@ -102,18 +107,37 @@ const TicTacToe = () => {
         }
     }, [isPlayerTurn, winner, makeBotMove]);
 
+    // Auto-remove oldest move when board is full (after move #9)
+    useEffect(() => {
+        if (moveHistory.length === 9 && !winner && !board.includes(null)) {
+            const timer = setTimeout(() => {
+                const newBoard = [...board];
+                const newMoveHistory = [...moveHistory];
+                const oldestMove = newMoveHistory.shift();
+                newBoard[oldestMove] = null;
+                setBoard(newBoard);
+                setMoveHistory(newMoveHistory);
+            }, 800); // Small delay to see the full board before removal
+            return () => clearTimeout(timer);
+        }
+    }, [moveHistory, winner, board]);
+
     const handleClick = (i) => {
         if (winner || board[i] || !isPlayerTurn) return;
 
+
         const newBoard = [...board];
+        let newMoveHistory = [...moveHistory];
+
         newBoard[i] = 'X';
+        newMoveHistory.push(i);
+
         setBoard(newBoard);
+        setMoveHistory(newMoveHistory);
 
         const gameWinner = calculateWinner(newBoard);
         if (gameWinner) {
             setWinner(gameWinner);
-        } else if (!newBoard.includes(null)) {
-            setWinner('Draw');
         } else {
             setIsPlayerTurn(false);
         }
@@ -123,6 +147,7 @@ const TicTacToe = () => {
         setBoard(Array(9).fill(null));
         setIsPlayerTurn(true);
         setWinner(null);
+        setMoveHistory([]);
     };
 
     return (
