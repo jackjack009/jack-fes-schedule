@@ -1,371 +1,50 @@
 .flappy-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
     margin: 0 auto;
-    padding: 0;
 }
 
-.flappy-game {
+.flappy-iframe-wrapper {
     width: 100%;
-    max-width: 400px;
-    height: 600px;
-    background: #4ec0ca;
-    position: relative;
+    max-width: 500px;
+    aspect-ratio: 9 / 16;
+    /* Mobile game aspect ratio */
+    border-radius: 12px;
     overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    background: #70c5ce;
+    /* Flappy Bird sky blue */
 }
 
-.flappy-sky {
-    position: absolute;
-    top: 0;
-    left: 0;
+.flappy-iframe {
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, #4ec0ca 0%, #4ec0ca 80%, #ded895 80%, #ded895 100%);
-    z-index: 0;
+    border: none;
 }
 
-/* Clouds */
-.cloud {
-    position: absolute;
-    background: white;
-    border-radius: 100px;
-    opacity: 0.8;
-    z-index: 1;
-}
-
-.cloud::before,
-.cloud::after {
-    content: '';
-    position: absolute;
-    background: white;
-    border-radius: 100px;
-}
-
-.cloud-1 {
-    width: 80px;
-    height: 30px;
-    top: 80px;
-    left: 50px;
-    animation: float 20s linear infinite;
-}
-
-.cloud-1::before {
-    width: 40px;
-    height: 40px;
-    top: -15px;
-    left: 10px;
-}
-
-.cloud-1::after {
-    width: 50px;
-    height: 35px;
-    top: -10px;
-    right: 10px;
-}
-
-.cloud-2 {
-    width: 100px;
-    height: 35px;
-    top: 150px;
-    right: 80px;
-    animation: float 25s linear infinite;
-}
-
-.cloud-2::before {
-    width: 50px;
-    height: 50px;
-    top: -20px;
-    left: 15px;
-}
-
-.cloud-2::after {
-    width: 60px;
-    height: 40px;
-    top: -15px;
-    right: 15px;
-}
-
-.cloud-3 {
-    width: 70px;
-    height: 28px;
-    top: 250px;
-    left: 200px;
-    animation: float 18s linear infinite;
-}
-
-.cloud-3::before {
-    width: 35px;
-    height: 35px;
-    top: -12px;
-    left: 8px;
-}
-
-.cloud-3::after {
-    width: 45px;
-    height: 32px;
-    top: -10px;
-    right: 8px;
-}
-
-@keyframes float {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(-500px);
-    }
-}
-
-/* City background */
-.city-bg {
-    position: absolute;
-    bottom: 100px;
-    left: 0;
-    width: 100%;
-    height: 120px;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120"><rect fill="%235dade2" x="10" y="60" width="40" height="60"/><rect fill="%235dade2" x="60" y="40" width="35" height="80"/><rect fill="%235dade2" x="105" y="70" width="30" height="50"/><rect fill="%235dade2" x="145" y="50" width="45" height="70"/><rect fill="%235dade2" x="200" y="65" width="38" height="55"/><rect fill="%235dade2" x="248" y="45" width="42" height="75"/><rect fill="%235dade2" x="300" y="55" width="35" height="65"/><rect fill="%235dade2" x="345" y="70" width="30" height="50"/></svg>') repeat-x;
-    background-size: 400px 120px;
-    opacity: 0.6;
-    z-index: 2;
-}
-
-/* Score display */
-.score-display {
-    position: absolute;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 4rem;
-    font-weight: bold;
-    color: white;
-    text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
-    z-index: 15;
-    font-family: 'Arial Black', sans-serif;
-}
-
-/* Bird */
-.bird {
-    position: absolute;
-    width: 34px;
-    height: 24px;
-    background: #ffd700;
-    border-radius: 50%;
-    z-index: 10;
-    transition: transform 0.1s;
-}
-
-.bird::before {
-    content: '';
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 6px;
-    height: 6px;
-    background: #000;
-    border-radius: 50%;
-    border: 2px solid white;
-}
-
-.bird::after {
-    content: '';
-    position: absolute;
-    top: 8px;
-    right: -8px;
-    width: 0;
-    height: 0;
-    border-left: 12px solid #ff6b35;
-    border-top: 4px solid transparent;
-    border-bottom: 4px solid transparent;
-}
-
-/* Pipes */
-.pipe {
-    position: absolute;
-    width: 52px;
-    background: linear-gradient(to right, #5cb85c 0%, #5cb85c 10%, #4cae4c 10%, #4cae4c 90%, #5cb85c 90%, #5cb85c 100%);
-    z-index: 5;
-    border-left: 2px solid #3d8b3d;
-    border-right: 2px solid #3d8b3d;
-}
-
-.pipe-cap {
-    position: absolute;
-    left: -4px;
-    width: 60px;
-    height: 28px;
-    background: linear-gradient(to right, #5cb85c 0%, #5cb85c 10%, #4cae4c 10%, #4cae4c 90%, #5cb85c 90%, #5cb85c 100%);
-    border: 2px solid #3d8b3d;
-    border-radius: 4px;
-}
-
-.pipe-top .pipe-cap {
-    bottom: 0;
-}
-
-.pipe-bottom .pipe-cap {
-    top: 0;
-}
-
-/* Ground */
-.flappy-ground {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    background: #ded895;
-    border-top: 3px solid #c4b87f;
-    z-index: 15;
-    background-image: repeating-linear-gradient(90deg,
-            #ded895 0px,
-            #ded895 20px,
-            #d4ce8a 20px,
-            #d4ce8a 40px);
-}
-
-.flappy-ground::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    background: repeating-linear-gradient(90deg,
-            #5cb85c 0px,
-            #5cb85c 10px,
-            #4cae4c 10px,
-            #4cae4c 20px);
-}
-
-/* Overlay */
-.flappy-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 20;
-}
-
-.flappy-message {
+.flappy-instructions {
     text-align: center;
-    color: white;
-    padding: 2rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    margin: 0;
+    padding: 10px;
 }
 
-.game-over-text {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #ff6b35;
-    text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
-    margin-bottom: 1.5rem;
-    font-family: 'Arial Black', sans-serif;
-    letter-spacing: 2px;
-}
-
-.score-board {
-    background: #d4ce8a;
-    border: 3px solid #8b7355;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-    min-width: 250px;
-}
-
-.score-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0.8rem 0;
-    padding: 0.5rem;
-}
-
-.score-label {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: #5a5a5a;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.score-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 2px 2px 0 #000;
-    font-family: 'Arial Black', sans-serif;
-}
-
-.play-button {
-    background: #5cb85c;
-    color: white;
-    border: 3px solid #3d8b3d;
-    border-radius: 8px;
-    padding: 0.8rem 2.5rem;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 0 #3d8b3d;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-family: 'Arial Black', sans-serif;
-}
-
-.play-button:hover {
-    background: #4cae4c;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #3d8b3d;
-}
-
-.play-button:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #3d8b3d;
-}
-
-.tap-hint {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    opacity: 0.8;
-    color: white;
-    text-shadow: 1px 1px 2px #000;
-}
-
-/* Mobile responsiveness */
-@media (max-width: 600px) {
-    .flappy-game {
-        height: 500px;
-        border-radius: 0;
+@media (max-width: 768px) {
+    .flappy-container {
+        padding: 10px;
     }
 
-    .score-display {
-        font-size: 3rem;
-        top: 40px;
+    .flappy-iframe-wrapper {
+        max-width: 100%;
     }
 
-    .game-over-text {
-        font-size: 2rem;
-    }
-
-    .score-board {
-        min-width: 200px;
-        padding: 1rem;
-    }
-
-    .score-value {
-        font-size: 1.2rem;
-    }
-
-    .play-button {
-        padding: 0.6rem 2rem;
-        font-size: 1rem;
+    .flappy-instructions {
+        font-size: 0.85rem;
     }
 }
