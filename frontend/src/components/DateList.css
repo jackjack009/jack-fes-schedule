@@ -72,7 +72,7 @@
 .date-item-content {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--spacing-md);
 }
 
@@ -80,6 +80,9 @@
     font-weight: 600;
     color: var(--color-text-primary);
     font-size: 0.95rem;
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
 }
 
 .date-item.active .date-item-name {
@@ -93,6 +96,10 @@
     background: var(--color-bg-primary);
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    /* Prevent the slot counter from shrinking */
+    white-space: nowrap;
+    /* Keep slot count on one line */
 }
 
 .date-item.active .date-item-slots {
