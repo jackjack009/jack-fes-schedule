@@ -301,7 +301,7 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
                             className="lightbox-image"
                         />
                         <div className="lightbox-caption">
-                            {images[currentImageIndex].alt}
+                            {/* {images[currentImageIndex].alt} */}
                             <span className="lightbox-counter">
                                 {currentImageIndex + 1} / {images.length}
                             </span>
