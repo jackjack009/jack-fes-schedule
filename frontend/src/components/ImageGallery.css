@@ -99,7 +99,12 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, object-fit 0.3s ease;
+}
+
+.gallery-image.hovered {
+    object-fit: contain;
+    background: rgba(0, 0, 0, 0.8);
 }
 
 .gallery-image[src] {
