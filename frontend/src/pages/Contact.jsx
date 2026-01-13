@@ -32,7 +32,7 @@ const Contact = () => {
                             <div className="pricing-icon">👥</div>
                             <h3>Couple/Some</h3>
                             <div className="pricing-price">
-                                <span className="price">180k</span>
+                                <span className="price">177k</span>
                                 <span className="per">/người</span>
                             </div>
                             <ul className="pricing-features">
