@@ -115,11 +115,11 @@ const Header = () => {
                     </div>
 
                     <Link to="/calendar" className={`nav-link ${isActive('/calendar') ? 'active' : ''}`}>
-                        Calendar
+                        Lịch đi fes
                     </Link>
 
                     <Link to="/contact" className={`nav-link ${isActive('/contact') ? 'active' : ''}`}>
-                        Price/Contact
+                        Giá/Contact
                     </Link>
 
                     <Link to="/admin" className={`nav-link ${isActive('/admin') ? 'active' : ''}`}>

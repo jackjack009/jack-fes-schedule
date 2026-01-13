@@ -20,11 +20,11 @@ const SlotGrid = ({ selectedDate }) => {
                 <div className="slot-grid-legend">
                     <div className="legend-item">
                         <span className="legend-dot available"></span>
-                        <span>Available</span>
+                        <span>Trống, book đi</span>
                     </div>
                     <div className="legend-item">
                         <span className="legend-dot unavailable"></span>
-                        <span>Not Available</span>
+                        <span>Đã có người giựt</span>
                     </div>
                 </div>
             </div>

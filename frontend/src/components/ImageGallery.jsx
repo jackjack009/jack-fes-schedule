@@ -7,6 +7,7 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
     const [error, setError] = useState(null);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [hoveredImage, setHoveredImage] = useState(null);
 
     useEffect(() => {
         if (driveUrl) {
@@ -190,13 +191,15 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
                         key={image.id}
                         className="gallery-item"
                         onClick={() => openLightbox(index)}
+                        onMouseEnter={() => setHoveredImage(index)}
+                        onMouseLeave={() => setHoveredImage(null)}
                         style={{ cursor: 'pointer' }}
                     >
                         <div className="image-wrapper">
                             <img
                                 src={image.src}
                                 alt={image.alt}
-                                className="gallery-image"
+                                className={`gallery-image ${hoveredImage === index ? 'hovered' : ''}`}
                                 loading="lazy"
                                 onError={(e) => {
                                     // Try alternative URL formats if primary fails
