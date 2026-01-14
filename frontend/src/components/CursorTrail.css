@@ -39,6 +39,15 @@
 
     .cursor-dot,
     .cursor-outline {
-        display: none;
+        display: none !important;
+    }
+}
+
+/* Also hide on small screens (mobile) */
+@media (max-width: 768px) {
+
+    .cursor-dot,
+    .cursor-outline {
+        display: none !important;
     }
 }
