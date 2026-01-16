@@ -33,13 +33,22 @@
 }
 
 .new-game-btn {
-    padding: 10px 20px;
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: 1px solid var(--text-primary);
+    border-radius: 0;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.new-game-btn:hover {
+    background: transparent;
+    color: var(--text-primary);
 }
 
 .board-2048 {
@@ -154,13 +163,23 @@
 }
 
 .game-over-overlay button {
-    padding: 10px 20px;
+    padding: 1rem 2rem;
     background: #8f7a66;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 0;
     cursor: pointer;
     font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.game-over-overlay button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
 }
 
 .instructions {

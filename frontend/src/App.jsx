@@ -3,7 +3,6 @@ import { ThemeProvider } from './context/ThemeContext';
 import { DataProvider } from './context/DataContext';
 import ScrollToTop from './components/ScrollToTop';
 import ScrollProgress from './components/ScrollProgress';
-import CursorTrail from './components/CursorTrail';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Landing from './pages/Landing';
@@ -48,7 +47,6 @@ function App() {
                 <Router>
                     <ScrollToTop />
                     <ScrollProgress />
-                    <CursorTrail />
                     <AppContent />
                 </Router>
             </DataProvider>

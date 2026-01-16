@@ -9,7 +9,7 @@
 .status {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--color-text-primary);
+    color: var(--text-primary);
     margin-bottom: 10px;
 }
 
@@ -51,16 +51,22 @@
 }
 
 .reset-btn {
-    padding: 10px 20px;
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
+    padding: 1rem 2rem;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: 1px solid var(--text-primary);
+    border-radius: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'Inter', sans-serif;
 }
 
 .reset-btn:hover {
-    background: var(--color-primary-dark);
+    background: transparent;
+    color: var(--text-primary);
+    transform: translateY(-2px);
 }
