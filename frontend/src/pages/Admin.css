@@ -13,7 +13,7 @@
     margin-bottom: var(--spacing-xl);
     padding: var(--spacing-lg);
     background: var(--color-bg-primary);
-    border-radius: var(--radius-lg);
+    /* border-radius: var(--radius-lg); */
     box-shadow: var(--shadow-md);
     border: 1px solid var(--color-border);
 }
@@ -57,7 +57,7 @@
 
 .login-card {
     background: var(--color-bg-primary);
-    border-radius: var(--radius-xl);
+    /* border-radius: var(--radius-xl); */
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--color-border);
     padding: var(--spacing-2xl);
@@ -97,7 +97,7 @@
     max-width: 1400px;
     margin: 0 auto var(--spacing-lg);
     padding: var(--spacing-md);
-    border-radius: var(--radius-md);
+    /* border-radius: var(--radius-md); */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -121,7 +121,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-sm);
+    /* border-radius: var(--radius-sm); */
     transition: all var(--transition-base);
 }
 
@@ -133,7 +133,7 @@
 .admin-controls {
     background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    /* border-radius: var(--radius-lg); */
     padding: var(--spacing-lg);
     margin-bottom: var(--spacing-md);
     box-shadow: var(--shadow-md);
@@ -237,7 +237,7 @@
     background: var(--color-bg-primary);
     color: var(--color-text-primary);
     border: 1px solid var(--color-primary);
-    border-radius: var(--radius-sm);
+    /* border-radius: var(--radius-sm); */
     font-family: inherit;
 }
 

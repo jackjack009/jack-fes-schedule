@@ -18,6 +18,7 @@ class ChessLogic {
         this.turn = WHITE;
         this.history = [];
         this.gameOver = false;
+        this.castling = { wK: true, wQ: true, bK: true, bQ: true };
         this.loadFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
     }
 
@@ -44,6 +45,12 @@ class ChessLogic {
             }
         }
         this.turn = (parts[1] === 'w') ? WHITE : BLACK;
+        this.castling = {
+            wK: parts[2] ? parts[2].includes('K') : true,
+            wQ: parts[2] ? parts[2].includes('Q') : true,
+            bK: parts[2] ? parts[2].includes('k') : true,
+            bQ: parts[2] ? parts[2].includes('q') : true
+        };
         this.history = [];
     }
 
@@ -91,6 +98,42 @@ class ChessLogic {
                     if (targetP && targetP.color !== piece.color) {
                         moves.push({ from: idx, to: target, type: 'capture' });
                     }
+                }
+            }
+        } else if (piece.type === KING) {
+            // Standard moves
+            const directions = dirs[KING];
+            for (let d of directions) {
+                let nr = r + d[0];
+                let nc = c + d[1];
+                if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+                    const target = nr * 8 + nc;
+                    const targetP = this.board[target];
+                    if (!targetP) {
+                        moves.push({ from: idx, to: target, type: 'move' });
+                    } else if (targetP.color !== piece.color) {
+                        moves.push({ from: idx, to: target, type: 'capture' });
+                    }
+                }
+            }
+            // Castling
+            if (piece.color === WHITE) {
+                if (this.castling.wK && !this.board[61] && !this.board[62] &&
+                    !this.isSquareAttacked(60, WHITE) && !this.isSquareAttacked(61, WHITE) && !this.isSquareAttacked(62, WHITE)) {
+                    moves.push({ from: 60, to: 62, type: 'castling-kingside' });
+                }
+                if (this.castling.wQ && !this.board[59] && !this.board[58] && !this.board[57] &&
+                    !this.isSquareAttacked(60, WHITE) && !this.isSquareAttacked(59, WHITE) && !this.isSquareAttacked(58, WHITE)) {
+                    moves.push({ from: 60, to: 58, type: 'castling-queenside' });
+                }
+            } else {
+                if (this.castling.bK && !this.board[5] && !this.board[6] &&
+                    !this.isSquareAttacked(4, BLACK) && !this.isSquareAttacked(5, BLACK) && !this.isSquareAttacked(6, BLACK)) {
+                    moves.push({ from: 4, to: 6, type: 'castling-kingside' });
+                }
+                if (this.castling.bQ && !this.board[3] && !this.board[2] && !this.board[1] &&
+                    !this.isSquareAttacked(4, BLACK) && !this.isSquareAttacked(3, BLACK) && !this.isSquareAttacked(2, BLACK)) {
+                    moves.push({ from: 4, to: 2, type: 'castling-queenside' });
                 }
             }
         } else {
@@ -168,15 +211,47 @@ class ChessLogic {
     makeMove(move) {
         const state = {
             board: [...this.board],
-            turn: this.turn
+            turn: this.turn,
+            castling: { ...this.castling }
         };
 
         const p = this.board[move.from];
         this.board[move.to] = p;
         this.board[move.from] = null;
 
+        // Castling specific moves
+        if (move.type === 'castling-kingside') {
+            const row = (p.color === WHITE) ? 7 : 0;
+            const rookFrom = row * 8 + 7;
+            const rookTo = row * 8 + 5;
+            this.board[rookTo] = this.board[rookFrom];
+            this.board[rookFrom] = null;
+        } else if (move.type === 'castling-queenside') {
+            const row = (p.color === WHITE) ? 7 : 0;
+            const rookFrom = row * 8 + 0;
+            const rookTo = row * 8 + 3;
+            this.board[rookTo] = this.board[rookFrom];
+            this.board[rookFrom] = null;
+        }
+
         if (p.type === PAWN && (move.to < 8 || move.to >= 56)) {
             this.board[move.to] = { type: QUEEN, color: p.color };
+        }
+
+        // Update castling rights
+        if (p.type === KING) {
+            if (p.color === WHITE) {
+                this.castling.wK = false;
+                this.castling.wQ = false;
+            } else {
+                this.castling.bK = false;
+                this.castling.bQ = false;
+            }
+        } else if (p.type === ROOK) {
+            if (move.from === 63) this.castling.wK = false;
+            if (move.from === 56) this.castling.wQ = false;
+            if (move.from === 7) this.castling.bK = false;
+            if (move.from === 0) this.castling.bQ = false;
         }
 
         this.turn = (this.turn === WHITE) ? BLACK : WHITE;
@@ -189,6 +264,7 @@ class ChessLogic {
         if (!state) return;
         this.board = state.board;
         this.turn = state.turn;
+        this.castling = state.castling;
     }
 
     getLegalMoves(color = this.turn) {

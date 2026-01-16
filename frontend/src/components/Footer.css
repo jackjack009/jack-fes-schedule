@@ -13,6 +13,10 @@
 
 .footer-content p {
     color: var(--text-secondary);
-    font-size: 0.95rem;
+    font-size: 0.75rem;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-family: 'Inter', sans-serif;
+    opacity: 0.4;
 }

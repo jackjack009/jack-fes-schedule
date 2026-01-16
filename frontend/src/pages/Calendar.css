@@ -1,42 +1,39 @@
-.home-page {
+.calendar-page {
     flex: 1;
-    padding: var(--spacing-xl);
+    padding: 2rem;
     animation: fadeIn 0.4s ease-out;
-    max-width: 1600px;
+    max-width: 1350px;
     margin: 0 auto;
     width: 100%;
 }
 
 .welcome-header {
     text-align: center;
-    margin-bottom: 40px;
-    padding: 20px;
-    background: var(--color-bg-primary);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--color-border);
+    margin-bottom: 4rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 .welcome-header h1 {
-    font-size: 1.5rem;
-    color: var(--color-text-primary);
+    font-size: 2.5rem;
+    color: var(--text-primary);
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.2;
 }
 
 .home-container {
     display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: var(--spacing-xl);
+    grid-template-columns: 350px 1fr;
+    gap: 4rem;
     align-items: start;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
+    width: 100%;
 }
 
 .home-sidebar {
     position: sticky;
-    top: calc(80px + var(--spacing-xl));
+    top: 6rem;
 }
 
 .home-content {
@@ -44,19 +41,17 @@
 }
 
 .games-container-wrapper {
-    margin-top: 60px;
-    padding: 40px 2rem 0;
+    margin-top: 6rem;
+    padding-top: 4rem;
     border-top: 1px solid var(--color-border);
-    max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
 }
 
 .games-header-text {
     text-align: center;
-    font-size: 1.8rem;
-    color: var(--color-text-primary);
-    margin-bottom: 30px;
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin-bottom: 3rem;
 }
 
 /* Loading & Error */
@@ -73,11 +68,11 @@
 .spinner {
     width: 50px;
     height: 50px;
-    border: 3px solid var(--color-border);
-    border-top-color: var(--color-primary);
+    border: 2px solid var(--color-border);
+    border-top-color: var(--text-primary);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 1.5rem;
 }
 
 @keyframes spin {
@@ -88,31 +83,28 @@
 
 .error-icon {
     font-size: 3rem;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 1.5rem;
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
     .home-container {
         grid-template-columns: 1fr;
+        gap: 3rem;
     }
 
     .home-sidebar {
         position: static;
-        margin-bottom: var(--spacing-lg);
+        margin-bottom: 3rem;
     }
 }
 
 @media (max-width: 768px) {
-    .home-page {
-        padding: var(--spacing-md);
+    .calendar-page {
+        padding: 2rem 1.5rem;
     }
 
     .welcome-header h1 {
-        font-size: 1.2rem;
-    }
-
-    .games-container-wrapper {
-        padding: 30px 0.5rem 0;
+        font-size: 2rem;
     }
 }
