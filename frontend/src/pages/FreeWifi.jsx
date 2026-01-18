@@ -25,8 +25,9 @@ const FreeWifi = () => {
                 className="wifi-image"
             />
             <h4>Trên đời này hàng free từ trên trời rơi xuống thì chỉ có nước mưa với cứt chim thôi~</h4>
+            <h4>Làm gì có wifi nào free ở đây chứ. Tỉnh mộng đi nè.</h4>
             <Link to="/" className="home-button">
-                Về trang chủ đi bạn ơi
+                Về đây tìm hiểu thêm về Jack Jack nha
             </Link>
         </div>
     );

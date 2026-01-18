@@ -59,11 +59,20 @@ const startServer = async () => {
         console.log('🗑️ Removed old "admin" user if existed');
 
         // Check if default admin exists
-        const adminUsername = process.env.ADMIN_USERNAME || 'jackjack';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'jackjack00900';
+        const adminUsername = process.env.ADMIN_USERNAME;
+        const adminPassword = process.env.ADMIN_PASSWORD;
 
-        const adminExists = await Admin.findOne({ username: adminUsername });
-        if (!adminExists) {
+        if (!adminUsername || !adminPassword) {
+            console.error('❌ FATAL ERROR: ADMIN_USERNAME or ADMIN_PASSWORD is not defined in environment variables.');
+            process.exit(1);
+        }
+
+        const existingAdmin = await Admin.findOne({ username: adminUsername });
+        if (existingAdmin) {
+            existingAdmin.password = adminPassword;
+            await existingAdmin.save();
+            console.log(`✅ Admin password updated from env (username: ${adminUsername})`);
+        } else {
             const defaultAdmin = new Admin({
                 username: adminUsername,
                 password: adminPassword
