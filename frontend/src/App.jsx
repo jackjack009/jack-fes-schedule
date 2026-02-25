@@ -13,6 +13,7 @@ import SamplesKyYeu from './pages/SamplesKyYeu';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import FreeWifi from './pages/FreeWifi';
+import LuckyWheel from './pages/LuckyWheel';
 import './index.css';
 import './effects.css';
 
@@ -33,6 +34,7 @@ function AppContent() {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/freewifi" element={<FreeWifi />} />
+                    <Route path="/luckywheel" element={<LuckyWheel />} />
                 </Routes>
             </main>
             {!hideHeaderFooter && <Footer />}

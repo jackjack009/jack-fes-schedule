@@ -122,6 +122,10 @@ const Header = () => {
                         Giá/Contact
                     </Link>
 
+                    <Link to="/luckywheel" className={`nav-link ${isActive('/luckywheel') ? 'active' : ''}`}>
+                        Lucky Wheel
+                    </Link>
+
                     <Link to="/admin" className={`nav-link ${isActive('/admin') ? 'active' : ''}`}>
                         Admin
                     </Link>
