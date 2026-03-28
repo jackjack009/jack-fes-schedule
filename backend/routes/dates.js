@@ -18,14 +18,14 @@ router.get('/', async (req, res) => {
 // Create new date (admin only)
 router.post('/', requireAuth, async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name, location } = req.body;
 
         // Get the highest order number
         const lastDate = await Date.findOne().sort({ order: -1 });
         const order = lastDate ? lastDate.order + 1 : 0;
 
         // Create new date with slots
-        const newDate = new Date({ name, order });
+        const newDate = new Date({ name, location: location || '', order });
         newDate.generateSlots();
 
         await newDate.save();
@@ -39,10 +39,12 @@ router.post('/', requireAuth, async (req, res) => {
 // Update date name (admin only)
 router.put('/:id', requireAuth, async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name, location } = req.body;
+        const updateData = { name };
+        if (location !== undefined) updateData.location = location;
         const date = await Date.findByIdAndUpdate(
             req.params.id,
-            { name },
+            updateData,
             { new: true }
         );
 
@@ -93,6 +95,22 @@ router.put('/:id/slots/:slotId', requireAuth, async (req, res) => {
         res.json(date);
     } catch (error) {
         console.error('Error toggling slot:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Toggle fullSlot flag (admin only)
+router.put('/:id/fullslot', requireAuth, async (req, res) => {
+    try {
+        const date = await Date.findById(req.params.id);
+        if (!date) {
+            return res.status(404).json({ message: 'Date not found' });
+        }
+        date.fullSlot = !date.fullSlot;
+        await date.save();
+        res.json(date);
+    } catch (error) {
+        console.error('Error toggling fullSlot:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });

@@ -22,7 +22,12 @@ const DateList = ({ dates, selectedDate, onSelectDate }) => {
                             style={{ animationDelay: `${index * 50}ms` }}
                         >
                             <div className="date-item-content">
-                                <span className="date-item-name">{date.name}</span>
+                                <div className="date-item-info">
+                                    <span className="date-item-name">{date.name}</span>
+                                    {date.location && (
+                                        <span className="date-item-location">{date.location}</span>
+                                    )}
+                                </div>
                                 <span className="date-item-slots">
                                     {date.slots.filter(s => s.available).length} / {date.slots.length}
                                 </span>

@@ -78,12 +78,32 @@
     gap: 1rem;
 }
 
+.date-item-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.date-item-location {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.date-item.active .date-item-location {
+    color: var(--bg-secondary);
+    opacity: 0.8;
+}
+
 .date-item-name {
     font-weight: 600;
     color: var(--text-primary);
     font-size: 0.95rem;
-    flex: 1;
-    min-width: 0;
     word-wrap: break-word;
     font-family: 'Inter', sans-serif;
 }

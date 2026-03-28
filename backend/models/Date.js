@@ -16,6 +16,14 @@ const dateSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  location: {
+    type: String,
+    default: ''
+  },
+  fullSlot: {
+    type: Boolean,
+    default: false
+  },
   order: {
     type: Number,
     required: true

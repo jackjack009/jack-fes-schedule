@@ -29,23 +29,31 @@ const SlotGrid = ({ selectedDate }) => {
                 </div>
             </div>
 
-            <div className="slot-grid-items">
-                {selectedDate.slots.map((slot, index) => (
-                    <div
-                        key={slot._id}
-                        className={`slot-item ${slot.available ? 'available' : 'unavailable'}`}
-                        style={{ animationDelay: `${index * 20}ms` }}
-                    >
-                        <div className="slot-time">{slot.time}</div>
-                        <div className="slot-status">
-                            {slot.available ? (
-                                <span className="status-badge success">✓ Available</span>
-                            ) : (
-                                <span className="status-badge danger">✗ Booked</span>
-                            )}
+            <div className="slot-grid-body">
+                <div className="slot-grid-items">
+                    {selectedDate.slots.map((slot, index) => (
+                        <div
+                            key={slot._id}
+                            className={`slot-item ${slot.available ? 'available' : 'unavailable'}`}
+                            style={{ animationDelay: `${index * 20}ms` }}
+                        >
+                            <div className="slot-time">{slot.time}</div>
+                            <div className="slot-status">
+                                {slot.available ? (
+                                    <span className="status-badge success">✓ Available</span>
+                                ) : (
+                                    <span className="status-badge danger">✗ Booked</span>
+                                )}
+                            </div>
                         </div>
+                    ))}
+                </div>
+
+                {selectedDate.fullSlot && (
+                    <div className="full-slot-overlay">
+                        <p className="full-slot-text">Fes này đủ KPI slot rồi, tạm dừng cho đỡ mệt. <br /> Xin mời em đi tham khảo thầy khác.</p>
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );

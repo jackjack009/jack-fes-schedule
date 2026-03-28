@@ -23,6 +23,7 @@ const Contact = () => {
                             <ul className="pricing-features">
                                 <li>⏱️ 15 phút</li>
                                 <li>📸 5 ảnh</li>
+                                <li>📸 +35k/ảnh</li>
                                 <li>✨ Retouch cơ bản</li>
                                 <li>🎨 Hên xui được ghép effect</li>
                             </ul>
@@ -38,6 +39,7 @@ const Contact = () => {
                             <ul className="pricing-features">
                                 <li>⏱️ 15 phút × số người</li>
                                 <li>📸 5 ảnh × số người</li>
+                                <li>📸 +30k/ảnh</li>
                                 <li>✨ Retouch cơ bản</li>
                                 <li>🎁 Giảm giá theo nhóm</li>
                             </ul>
