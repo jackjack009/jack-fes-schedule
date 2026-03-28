@@ -58,6 +58,14 @@
     background: var(--color-border);
 }
 
+.slot-grid-body {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
 .slot-grid-items {
     flex: 1;
     overflow-y: auto;
@@ -66,6 +74,39 @@
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 1rem;
     align-content: start;
+}
+
+/* Full Slot Overlay */
+.full-slot-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    animation: fadeIn 0.3s ease-out;
+}
+
+[data-theme="dark"] .full-slot-overlay {
+    background: rgba(20, 20, 20, 0.75);
+}
+
+.full-slot-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.01em;
+    padding: 1.5rem 2rem;
+    border: 2px solid var(--color-border);
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
 }
 
 .slot-item {

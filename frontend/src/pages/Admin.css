@@ -133,7 +133,6 @@
 .admin-controls {
     background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
-    /* border-radius: var(--radius-lg); */
     padding: var(--spacing-lg);
     margin-bottom: var(--spacing-md);
     box-shadow: var(--shadow-md);
@@ -145,13 +144,85 @@
     color: var(--color-text-primary);
 }
 
-.create-form {
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
     display: flex;
-    gap: var(--spacing-sm);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
 }
 
-.create-form .form-input {
-    flex: 1;
+.modal-card {
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+    width: 100%;
+    max-width: 420px;
+    animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(16px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--color-text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    line-height: 1;
+    padding: 0 4px;
+    transition: color var(--transition-base);
+}
+
+.modal-close:hover {
+    color: var(--color-text-primary);
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+    margin-top: var(--spacing-sm);
+}
+
+/* Location label in sidebar date item */
+.date-location-admin {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    margin-top: 2px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Draggable Date List */
@@ -214,7 +285,8 @@
 .date-content {
     flex: 1;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     cursor: pointer;
     min-width: 0;
 }
@@ -277,6 +349,40 @@
     padding: var(--spacing-lg);
     background: var(--color-bg-tertiary);
     border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+}
+
+.btn-full-slot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--color-border);
+    background: var(--color-bg-primary);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+}
+
+.btn-full-slot:hover {
+    border-color: var(--color-text-secondary);
+    color: var(--color-text-primary);
+}
+
+.btn-full-slot.active {
+    border-color: #e53e3e;
+    background: rgba(229, 62, 62, 0.08);
+    color: #e53e3e;
 }
 
 .slot-management-header h3 {
@@ -291,11 +397,31 @@
     color: var(--color-text-secondary);
 }
 
+.slots-grid-wrapper {
+    position: relative;
+}
+
+.admin-full-slot-banner {
+    padding: 0.5rem var(--spacing-lg);
+    background: rgba(229, 62, 62, 0.08);
+    border-bottom: 1px solid rgba(229, 62, 62, 0.25);
+    color: #e53e3e;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
 .slots-grid-admin {
     padding: var(--spacing-lg);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: var(--spacing-md);
+    transition: opacity 0.3s ease;
+}
+
+.slots-grid-admin.full-slot-active {
+    opacity: 0.4;
 }
 
 .admin-slot-item {

@@ -5,17 +5,22 @@ import { useData } from '../context/DataContext';
 import './Admin.css';
 
 const Admin = () => {
-    const { refreshDates } = useData(); // Get refresh function from context
+    const { refreshDates } = useData();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [newDateName, setNewDateName] = useState('');
-    const [editingId, setEditingId] = useState(null);
-    const [editingName, setEditingName] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    // Modal state
+    const [showModal, setShowModal] = useState(false);
+    const [modalMode, setModalMode] = useState('create'); // 'create' | 'edit'
+    const [modalDateId, setModalDateId] = useState(null);
+    const [modalTitle, setModalTitle] = useState('');
+    const [modalLocation, setModalLocation] = useState('');
+    const [modalLoading, setModalLoading] = useState(false);
 
     useEffect(() => {
         checkAuth();
@@ -41,14 +46,12 @@ const Admin = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
-
         try {
             await authAPI.login({ username, password });
             setIsAuthenticated(true);
             setUsername('');
             setPassword('');
         } catch (err) {
-            // Handle rate limit error (429) or other errors
             const errorMessage = err.response?.data?.message ||
                 err.response?.data ||
                 err.message ||
@@ -72,8 +75,6 @@ const Admin = () => {
         try {
             const response = await datesAPI.getAll();
             setDates(response.data);
-
-            // Update selectedDate if it exists in the new data
             if (selectedDate) {
                 const updatedSelected = response.data.find(d => d._id === selectedDate._id);
                 if (updatedSelected) {
@@ -91,33 +92,50 @@ const Admin = () => {
         }
     };
 
-    const handleCreateDate = async (e) => {
-        e.preventDefault();
-        if (!newDateName.trim()) return;
-
-        try {
-            await datesAPI.create({ name: newDateName });
-            setNewDateName('');
-            await fetchDates();
-            await refreshDates();
-        } catch (err) {
-            console.error('Error creating date:', err);
-            setError('Failed to create date');
-        }
+    // Open modal for creating a new date
+    const openCreateModal = () => {
+        setModalMode('create');
+        setModalDateId(null);
+        setModalTitle('');
+        setModalLocation('');
+        setShowModal(true);
     };
 
-    const handleUpdateDate = async (id) => {
-        if (!editingName.trim()) return;
+    // Open modal for editing an existing date
+    const openEditModal = (date, e) => {
+        if (e) { e.stopPropagation(); }
+        setModalMode('edit');
+        setModalDateId(date._id);
+        setModalTitle(date.name);
+        setModalLocation(date.location || '');
+        setShowModal(true);
+    };
 
+    const closeModal = () => {
+        setShowModal(false);
+        setModalTitle('');
+        setModalLocation('');
+        setModalDateId(null);
+    };
+
+    const handleModalSubmit = async (e) => {
+        e.preventDefault();
+        if (!modalTitle.trim()) return;
+        setModalLoading(true);
         try {
-            await datesAPI.update(id, { name: editingName });
-            setEditingId(null);
-            setEditingName('');
+            if (modalMode === 'create') {
+                await datesAPI.create({ name: modalTitle.trim(), location: modalLocation.trim() });
+            } else {
+                await datesAPI.update(modalDateId, { name: modalTitle.trim(), location: modalLocation.trim() });
+            }
+            closeModal();
             await fetchDates();
             await refreshDates();
         } catch (err) {
-            console.error('Error updating date:', err);
-            setError('Failed to update date');
+            console.error('Error saving date:', err);
+            setError('Failed to save date');
+        } finally {
+            setModalLoading(false);
         }
     };
 
@@ -126,7 +144,6 @@ const Admin = () => {
             e.preventDefault();
             e.stopPropagation();
         }
-
         try {
             await datesAPI.delete(id);
             await fetchDates();
@@ -138,45 +155,45 @@ const Admin = () => {
     };
 
     const handleToggleSlot = async (dateId, slotId) => {
-        console.log('Toggle slot called:', { dateId, slotId });
         try {
             setError('');
-            console.log('Calling API...');
-            const response = await datesAPI.toggleSlot(dateId, slotId);
-            console.log('API response:', response);
-            await fetchDates(); // Refresh admin page data
-            await refreshDates(); // Refresh global context (for Calendar page)
-            console.log('Dates refreshed');
+            await datesAPI.toggleSlot(dateId, slotId);
+            await fetchDates();
+            await refreshDates();
         } catch (err) {
             console.error('Error toggling slot:', err);
-            console.error('Error response:', err.response);
             const errorMsg = err.response?.data?.message || 'Failed to toggle slot';
             setError(errorMsg);
             setTimeout(() => setError(''), 3000);
         }
     };
 
+    const handleToggleFullSlot = async (dateId) => {
+        try {
+            setError('');
+            await datesAPI.toggleFullSlot(dateId);
+            await fetchDates();
+            await refreshDates();
+        } catch (err) {
+            console.error('Error toggling fullSlot:', err);
+            setError('Failed to toggle full slot');
+            setTimeout(() => setError(''), 3000);
+        }
+    };
+
     const handleDragEnd = async (result) => {
         if (!result.destination) return;
-
         const items = Array.from(dates);
         const [reorderedItem] = items.splice(result.source.index, 1);
         items.splice(result.destination.index, 0, reorderedItem);
-
         setDates(items);
-
         try {
             await datesAPI.reorder(items.map(d => d._id));
             await refreshDates();
         } catch (err) {
             console.error('Error reordering dates:', err);
-            fetchDates(); // Revert on error
+            fetchDates();
         }
-    };
-
-    const generateDefaultDateName = () => {
-        const today = new Date();
-        return today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
 
     if (loading) {
@@ -199,14 +216,10 @@ const Admin = () => {
                             <h2>🔐 Admin Login</h2>
                             <p>Cái này dành cho Dách Dách thôi</p>
                         </div>
-
                         <form onSubmit={handleLogin} className="login-form">
                             {error && (
-                                <div className="alert alert-error">
-                                    {error}
-                                </div>
+                                <div className="alert alert-error">{error}</div>
                             )}
-
                             <div className="form-group">
                                 <label className="form-label">Username</label>
                                 <input
@@ -218,7 +231,6 @@ const Admin = () => {
                                     required
                                 />
                             </div>
-
                             <div className="form-group">
                                 <label className="form-label">Password</label>
                                 <input
@@ -230,11 +242,9 @@ const Admin = () => {
                                     required
                                 />
                             </div>
-
                             <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }}>
                                 Login
                             </button>
-
                             <div className="login-hint">
                                 <small>Hoi đừng có cố login làm chi</small>
                             </div>
@@ -247,6 +257,50 @@ const Admin = () => {
 
     return (
         <div className="admin-page">
+            {/* Date Modal */}
+            {showModal && (
+                <div className="modal-overlay" onClick={closeModal}>
+                    <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3>{modalMode === 'create' ? '+ Add Date' : '✏️ Edit Date'}</h3>
+                            <button className="modal-close" onClick={closeModal}>×</button>
+                        </div>
+                        <form onSubmit={handleModalSubmit} className="modal-form">
+                            <div className="form-group">
+                                <label className="form-label">Title</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    value={modalTitle}
+                                    onChange={(e) => setModalTitle(e.target.value)}
+                                    placeholder="e.g., Artist Day 29/3"
+                                    required
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Location</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    value={modalLocation}
+                                    onChange={(e) => setModalLocation(e.target.value)}
+                                    placeholder="e.g., Hall A, Floor 2"
+                                />
+                            </div>
+                            <div className="modal-actions">
+                                <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                                    Cancel
+                                </button>
+                                <button type="submit" className="btn btn-success" disabled={modalLoading}>
+                                    {modalLoading ? 'Saving...' : (modalMode === 'create' ? 'Add Date' : 'Save Changes')}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             <div className="admin-header">
                 <div>
                     <h1>⚙️ Admin Panel</h1>
@@ -265,23 +319,12 @@ const Admin = () => {
             )}
 
             <div className="admin-content">
-                {/* Left Sidebar - Date List with Drag & Drop */}
+                {/* Left Sidebar */}
                 <div className="admin-sidebar">
                     <div className="admin-controls">
-                        <h3>Create New Date</h3>
-                        <form onSubmit={handleCreateDate} className="create-form">
-                            <input
-                                type="text"
-                                className="form-input"
-                                value={newDateName}
-                                onChange={(e) => setNewDateName(e.target.value)}
-                                placeholder={`e.g., ${generateDefaultDateName()}`}
-                                required
-                            />
-                            <button type="submit" className="btn btn-success btn-sm">
-                                + Add Date
-                            </button>
-                        </form>
+                        <button className="btn btn-success" style={{ width: '100%' }} onClick={openCreateModal}>
+                            + Add Date
+                        </button>
                     </div>
 
                     <DragDropContext onDragEnd={handleDragEnd}>
@@ -311,29 +354,15 @@ const Admin = () => {
                                                         className="date-content"
                                                         onClick={() => setSelectedDate(date)}
                                                     >
-                                                        {editingId === date._id ? (
-                                                            <input
-                                                                type="text"
-                                                                className="edit-input"
-                                                                value={editingName}
-                                                                onChange={(e) => setEditingName(e.target.value)}
-                                                                onBlur={() => handleUpdateDate(date._id)}
-                                                                onKeyPress={(e) => e.key === 'Enter' && handleUpdateDate(date._id)}
-                                                                autoFocus
-                                                                onClick={(e) => e.stopPropagation()}
-                                                            />
-                                                        ) : (
-                                                            <span className="date-name">{date.name}</span>
+                                                        <span className="date-name">{date.name}</span>
+                                                        {date.location && (
+                                                            <span className="date-location-admin">{date.location}</span>
                                                         )}
                                                     </div>
 
                                                     <div className="date-actions">
                                                         <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setEditingId(date._id);
-                                                                setEditingName(date.name);
-                                                            }}
+                                                            onClick={(e) => openEditModal(date, e)}
                                                             className="action-btn edit-btn"
                                                             title="Edit"
                                                         >
@@ -369,27 +398,42 @@ const Admin = () => {
                     ) : (
                         <div className="slot-management">
                             <div className="slot-management-header">
-                                <h3>🕐 Manage Slots for {selectedDate.name}</h3>
-                                <p>Click on any slot to toggle its availability</p>
+                                <div>
+                                    <h3>🕐 Manage Slots for {selectedDate.name}</h3>
+                                    <p>Click on any slot to toggle its availability</p>
+                                </div>
+                                <button
+                                    onClick={() => handleToggleFullSlot(selectedDate._id)}
+                                    className={`btn-full-slot ${selectedDate.fullSlot ? 'active' : ''}`}
+                                >
+                                    {selectedDate.fullSlot ? '🔴 Full Slot: ON' : '⚪ Full Slot: OFF'}
+                                </button>
                             </div>
 
-                            <div className="slots-grid-admin">
-                                {selectedDate.slots.map((slot) => (
-                                    <button
-                                        key={slot._id}
-                                        onClick={() => handleToggleSlot(selectedDate._id, slot._id)}
-                                        className={`admin-slot-item ${slot.available ? 'available' : 'unavailable'}`}
-                                    >
-                                        <div className="slot-time">{slot.time}</div>
-                                        <div className="slot-status-badge">
-                                            {slot.available ? (
-                                                <span className="badge-available">✓ Available</span>
-                                            ) : (
-                                                <span className="badge-unavailable">✗ Booked</span>
-                                            )}
-                                        </div>
-                                    </button>
-                                ))}
+                            <div className="slots-grid-wrapper">
+                                {selectedDate.fullSlot && (
+                                    <div className="admin-full-slot-banner" aria-label="Full Slot active">
+                                        🔴 Full Slot mode is ON — viewers see an overlay
+                                    </div>
+                                )}
+                                <div className={`slots-grid-admin${selectedDate.fullSlot ? ' full-slot-active' : ''}`}>
+                                    {selectedDate.slots.map((slot) => (
+                                        <button
+                                            key={slot._id}
+                                            onClick={() => handleToggleSlot(selectedDate._id, slot._id)}
+                                            className={`admin-slot-item ${slot.available ? 'available' : 'unavailable'}`}
+                                        >
+                                            <div className="slot-time">{slot.time}</div>
+                                            <div className="slot-status-badge">
+                                                {slot.available ? (
+                                                    <span className="badge-available">✓ Available</span>
+                                                ) : (
+                                                    <span className="badge-unavailable">✗ Booked</span>
+                                                )}
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     )}
