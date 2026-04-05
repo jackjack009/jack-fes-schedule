@@ -24,6 +24,10 @@ const dateSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  fullSlotMessage: {
+    type: String,
+    default: ''
+  },
   order: {
     type: Number,
     required: true

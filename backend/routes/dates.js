@@ -102,11 +102,14 @@ router.put('/:id/slots/:slotId', requireAuth, async (req, res) => {
 // Toggle fullSlot flag (admin only)
 router.put('/:id/fullslot', requireAuth, async (req, res) => {
     try {
+        const { message } = req.body;
         const date = await Date.findById(req.params.id);
         if (!date) {
             return res.status(404).json({ message: 'Date not found' });
         }
         date.fullSlot = !date.fullSlot;
+        // Save custom message when turning ON; clear it when turning OFF
+        date.fullSlotMessage = date.fullSlot ? (message || '') : '';
         await date.save();
         res.json(date);
     } catch (error) {

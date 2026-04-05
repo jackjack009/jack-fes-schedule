@@ -51,7 +51,12 @@ const SlotGrid = ({ selectedDate }) => {
 
                 {selectedDate.fullSlot && (
                     <div className="full-slot-overlay">
-                        <p className="full-slot-text">Fes này đủ KPI slot rồi, tạm dừng cho đỡ mệt. <br /> Xin mời em đi tham khảo thầy khác.</p>
+                        <p className="full-slot-text">
+                            {selectedDate.fullSlotMessage
+                                ? selectedDate.fullSlotMessage
+                                : <>Fes này đủ KPI slot rồi, tạm dừng cho đỡ mệt. <br /> Xin mời em đi tham khảo thầy khác.</>
+                            }
+                        </p>
                     </div>
                 )}
             </div>
