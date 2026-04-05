@@ -214,6 +214,20 @@
     margin-top: var(--spacing-sm);
 }
 
+.fs-message-input {
+    resize: vertical;
+    min-height: 72px;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.78rem;
+    color: var(--color-text-tertiary);
+}
+
 /* Location label in sidebar date item */
 .date-location-admin {
     font-size: 0.75rem;

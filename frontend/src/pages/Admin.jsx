@@ -22,6 +22,12 @@ const Admin = () => {
     const [modalLocation, setModalLocation] = useState('');
     const [modalLoading, setModalLoading] = useState(false);
 
+    // Full Slot message modal state
+    const [showFsModal, setShowFsModal] = useState(false);
+    const [fsModalDateId, setFsModalDateId] = useState(null);
+    const [fsMessage, setFsMessage] = useState('');
+    const [fsModalLoading, setFsModalLoading] = useState(false);
+
     useEffect(() => {
         checkAuth();
     }, []);
@@ -168,16 +174,43 @@ const Admin = () => {
         }
     };
 
-    const handleToggleFullSlot = async (dateId) => {
+    const handleToggleFullSlot = async (date) => {
+        // Turning OFF — no modal needed
+        if (date.fullSlot) {
+            try {
+                setError('');
+                await datesAPI.toggleFullSlot(date._id, '');
+                await fetchDates();
+                await refreshDates();
+            } catch (err) {
+                console.error('Error toggling fullSlot:', err);
+                setError('Failed to toggle full slot');
+                setTimeout(() => setError(''), 3000);
+            }
+            return;
+        }
+        // Turning ON — open message modal
+        setFsModalDateId(date._id);
+        setFsMessage(date.fullSlotMessage || '');
+        setShowFsModal(true);
+    };
+
+    const handleFsModalSubmit = async (e) => {
+        e.preventDefault();
+        setFsModalLoading(true);
         try {
-            setError('');
-            await datesAPI.toggleFullSlot(dateId);
+            await datesAPI.toggleFullSlot(fsModalDateId, fsMessage.trim());
+            setShowFsModal(false);
+            setFsMessage('');
+            setFsModalDateId(null);
             await fetchDates();
             await refreshDates();
         } catch (err) {
             console.error('Error toggling fullSlot:', err);
             setError('Failed to toggle full slot');
             setTimeout(() => setError(''), 3000);
+        } finally {
+            setFsModalLoading(false);
         }
     };
 
@@ -301,6 +334,39 @@ const Admin = () => {
                 </div>
             )}
 
+            {/* Full Slot Message Modal */}
+            {showFsModal && (
+                <div className="modal-overlay" onClick={() => setShowFsModal(false)}>
+                    <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3>🔴 Enable Full Slot</h3>
+                            <button className="modal-close" onClick={() => setShowFsModal(false)}>×</button>
+                        </div>
+                        <form onSubmit={handleFsModalSubmit} className="modal-form">
+                            <div className="form-group">
+                                <label className="form-label">Custom message <span style={{fontWeight:400,opacity:0.6}}>(optional)</span></label>
+                                <textarea
+                                    className="form-input fs-message-input"
+                                    value={fsMessage}
+                                    onChange={(e) => setFsMessage(e.target.value)}
+                                    placeholder={`Đủ KPI slot rồi,\ntạm dừng cho đỡ mệt`}
+                                    rows={3}
+                                />
+                                <small className="form-hint">Leave empty to use the default message.</small>
+                            </div>
+                            <div className="modal-actions">
+                                <button type="button" className="btn btn-secondary" onClick={() => setShowFsModal(false)}>
+                                    Cancel
+                                </button>
+                                <button type="submit" className="btn btn-danger" disabled={fsModalLoading}>
+                                    {fsModalLoading ? 'Saving...' : 'Enable Full Slot'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             <div className="admin-header">
                 <div>
                     <h1>⚙️ Admin Panel</h1>
@@ -403,7 +469,7 @@ const Admin = () => {
                                     <p>Click on any slot to toggle its availability</p>
                                 </div>
                                 <button
-                                    onClick={() => handleToggleFullSlot(selectedDate._id)}
+                                    onClick={() => handleToggleFullSlot(selectedDate)}
                                     className={`btn-full-slot ${selectedDate.fullSlot ? 'active' : ''}`}
                                 >
                                     {selectedDate.fullSlot ? '🔴 Full Slot: ON' : '⚪ Full Slot: OFF'}
