@@ -244,3 +244,112 @@
         font-size: 2.5rem;
     }
 }
+
+/* ── Slot booking popup ──────────────────────────────── */
+.slot-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 1rem;
+    animation: sgFadeIn 0.18s ease-out;
+}
+
+@keyframes sgFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.slot-popup-card {
+    position: relative;
+    background: var(--bg-secondary, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    padding: 2.5rem 2rem 2rem;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    animation: sgSlideUp 0.2s ease-out;
+}
+
+@keyframes sgSlideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.slot-popup-close {
+    position: absolute;
+    top: 0.85rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--text-secondary, #6b7280);
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.15s;
+}
+.slot-popup-close:hover { color: var(--text-primary, #111); }
+
+.slot-popup-icon {
+    font-size: 2.2rem;
+    margin-bottom: 0.4rem;
+}
+
+.slot-popup-time {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-primary, #111);
+    margin: 0 0 0.75rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.slot-popup-msg {
+    font-size: 0.95rem;
+    color: var(--text-secondary, #555);
+    line-height: 1.55;
+    margin: 0 0 1.75rem;
+}
+
+.slot-popup-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.slot-popup-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    white-space: nowrap;
+}
+.slot-popup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+.slot-popup-btn:active { transform: translateY(0); }
+
+.slot-popup-btn--fb {
+    background: #1877f2;
+    color: #fff;
+}
+.slot-popup-btn--fb:hover { opacity: 0.92; }
+
+.slot-popup-btn--msg {
+    background: linear-gradient(135deg, #00b2ff 0%, #a033ff 100%);
+    color: #fff;
+}
+.slot-popup-btn--msg:hover { opacity: 0.92; }
