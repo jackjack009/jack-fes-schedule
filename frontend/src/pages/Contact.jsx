@@ -119,10 +119,10 @@ const Contact = () => {
 
                                 {/* <div className="divider"></div> */}
 
-                                <div className="message-section">
+                                {/* <div className="message-section">
                                     <h4>Send Message</h4>
                                     <a
-                                        href="https://www.facebook.com/messages/t/9242431789215649"
+                                        href="https://m.me/jackjack00900"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="messenger-link"
@@ -132,7 +132,7 @@ const Contact = () => {
                                         </svg>
                                         <span>Chat on Messenger</span>
                                     </a>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
