@@ -33,7 +33,8 @@ const Contact = () => {
                             <div className="pricing-icon">👥</div>
                             <h3>Couple/Some</h3>
                             <div className="pricing-price">
-                                <span className="price">177k</span>
+                                <span className="per">vẫn là </span>
+                                <span className="price">197k</span>
                                 <span className="per">/người</span>
                             </div>
                             <ul className="pricing-features">
@@ -41,7 +42,7 @@ const Contact = () => {
                                 <li>📸 5 ảnh × số người</li>
                                 <li>📸 +30k/ảnh</li>
                                 <li>✨ Retouch cơ bản</li>
-                                <li>🎁 Giảm giá theo nhóm</li>
+                                <li>🎨 Hông có hên xui effect đâu, mệt lắm</li>
                             </ul>
                         </div>
 
