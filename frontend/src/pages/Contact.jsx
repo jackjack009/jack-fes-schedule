@@ -9,7 +9,7 @@ const Contact = () => {
                 <div className="pricing-container">
                     <h1>Bảng Giá Đi Fes</h1>
                     {/* <p className="pricing-subtitle">Các fen chọn gói theo nhu cầu nghen</p> */}
-                    <p className="pricing-subtitle">(Bắt đầu áp dụng từ tháng 3 năm 2026)</p>
+                    {/* <p className="pricing-subtitle">(Bắt đầu áp dụng từ tháng 3 năm 2026)</p> */}
 
                     <div className="pricing-grid">
                         <div className="pricing-card featured">
