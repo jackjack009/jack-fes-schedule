@@ -9,7 +9,7 @@ const Contact = () => {
                 <div className="pricing-container">
                     <h1>Bảng Giá Đi Fes</h1>
                     {/* <p className="pricing-subtitle">Các fen chọn gói theo nhu cầu nghen</p> */}
-                    {/* <p className="pricing-subtitle">(Bắt đầu áp dụng từ tháng 3 năm 2026)</p> */}
+                    <p className="pricing-subtitle">(Bắt đầu áp dụng từ tháng 8 năm 2026)</p>
 
                     <div className="pricing-grid">
                         <div className="pricing-card featured">
@@ -17,7 +17,7 @@ const Contact = () => {
                             <div className="pricing-icon">👤</div>
                             <h3>Solo</h3>
                             <div className="pricing-price">
-                                <span className="price">197k</span>
+                                <span className="price">247k</span>
                                 <span className="per">/người</span>
                             </div>
                             <ul className="pricing-features">
@@ -34,7 +34,7 @@ const Contact = () => {
                             <h3>Couple/Some</h3>
                             <div className="pricing-price">
                                 <span className="per">vẫn là </span>
-                                <span className="price">197k</span>
+                                <span className="price">247k</span>
                                 <span className="per">/người</span>
                             </div>
                             <ul className="pricing-features">
@@ -43,6 +43,19 @@ const Contact = () => {
                                 <li>📸 +30k/ảnh</li>
                                 <li>✨ Retouch cơ bản</li>
                                 <li>🎨 Hông có hên xui effect đâu, mệt lắm</li>
+                            </ul>
+                        </div>
+
+                        <div className="pricing-card">
+                            <div className="pricing-icon">🖼️</div>
+                            <h3>Design</h3>
+                            <div className="pricing-price">
+                                <span className="price">≥97k</span>
+                            </div>
+                            <ul className="pricing-features">
+                                <li>💴 Giảm giá chỉ còn ≥57k cho khách book shoot</li>
+                                <li>🔧 Giá cả cụ thể tùy thuộc vào yêu cầu</li>
+                                <li>💬 Chi tiết trao đổi</li>
                             </ul>
                         </div>
 
@@ -56,7 +69,7 @@ const Contact = () => {
                                 <li>🌟 Ghép hiệu ứng linh tinh</li>
                                 <li>🎬 Thay background vớ vẩn</li>
                                 <li>✨ Retouch cơ bản (vì ko có cái nâng cao bao giờ)</li>
-                                <li>💬 Chi tiết trao đổi</li>
+                                <li>🎲 Hên xui nhận làm</li>
                             </ul>
                         </div>
                     </div>
@@ -99,12 +112,12 @@ const Contact = () => {
 
                         {/* Social & Message Combined */}
                         <div className="contact-card social-card">
-                            <h3>📱 Follow & Message</h3>
+                            <h3>📱 Follow Jack Jack</h3>
                             <p>Theo dõi để nấu xói Jack Jack nào!</p>
 
                             <div className="social-actions-wrapper">
                                 <div className="social-section">
-                                    <h4>Follow Me</h4>
+                                    <h4>Facebook</h4>
                                     <a
                                         href="https://www.facebook.com/jackjack00900/"
                                         target="_blank"
@@ -118,22 +131,22 @@ const Contact = () => {
                                     </a>
                                 </div>
 
-                                {/* <div className="divider"></div> */}
+                                <div className="divider"></div>
 
-                                {/* <div className="message-section">
-                                    <h4>Send Message</h4>
+                                <div className="message-section">
+                                    <h4>Tiktok</h4>
                                     <a
-                                        href="https://m.me/jackjack00900"
+                                        href="https://www.tiktok.com/@jackjackocschos"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="messenger-link"
                                     >
-                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.912 1.446 5.51 3.707 7.206V22l3.398-1.87c.907.252 1.87.387 2.895.387 5.523 0 10-4.145 10-9.243C22 6.145 17.523 2 12 2zm.993 12.616l-2.558-2.73-4.993 2.73 5.491-5.832 2.623 2.73 4.927-2.73-5.49 5.832z" />
+                                        <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor">
+                                            <path d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z" />
                                         </svg>
-                                        <span>Chat on Messenger</span>
+                                        <span>Ngó video</span>
                                     </a>
-                                </div> */}
+                                </div>
                             </div>
                         </div>
                     </div>

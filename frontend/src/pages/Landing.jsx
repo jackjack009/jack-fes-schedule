@@ -93,6 +93,14 @@ const Landing = () => {
                             </p>
                         </Link>
 
+                        <Link to="/samples/design" className="service-card">
+                            <div className="service-icon">🖼️</div>
+                            <h3 className="service-title">Design poster</h3>
+                            <p className="service-description">
+                                Làm mấy cái poster cool ngầu ngắm cho sướng mắt
+                            </p>
+                        </Link>
+
                         <Link to="/samples/shoot" className="service-card">
                             <div className="service-icon">📸</div>
                             <h3 className="service-title">Shoot ngoài</h3>

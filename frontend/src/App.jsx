@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { DataProvider } from './context/DataContext';
 import ScrollToTop from './components/ScrollToTop';
@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import Landing from './pages/Landing';
 import Calendar from './pages/Calendar';
 import SamplesFes from './pages/SamplesFes';
+import SamplesDesign from './pages/SamplesDesign';
 import SamplesShoot from './pages/SamplesShoot';
 import SamplesKyYeu from './pages/SamplesKyYeu';
 import Contact from './pages/Contact';
@@ -28,7 +29,9 @@ function AppContent() {
                 <Routes>
                     <Route path="/" element={<Landing />} />
                     <Route path="/calendar" element={<Calendar />} />
+                    <Route path="/samples" element={<Navigate to="/samples/fes" replace />} />
                     <Route path="/samples/fes" element={<SamplesFes />} />
+                    <Route path="/samples/design" element={<SamplesDesign />} />
                     <Route path="/samples/shoot" element={<SamplesShoot />} />
                     <Route path="/samples/ky-yeu" element={<SamplesKyYeu />} />
                     <Route path="/contact" element={<Contact />} />

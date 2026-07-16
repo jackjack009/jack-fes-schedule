@@ -6,6 +6,17 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import dateRoutes from './routes/dates.js';
 import Admin from './models/Admin.js';
+import dns from 'dns';
+
+// Fix Node.js DNS resolution bug on Windows where it incorrectly defaults to 127.0.0.1
+try {
+    const dnsServers = dns.getServers();
+    if (dnsServers.length === 1 && dnsServers[0] === '127.0.0.1') {
+        dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+    }
+} catch (e) {
+    console.warn('Failed to set custom DNS servers:', e.message);
+}
 
 dotenv.config();
 

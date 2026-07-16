@@ -76,20 +76,20 @@ const Header = () => {
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                     >
-                        <span
+                        <Link
+                            to="/samples/fes"
                             className={`nav-link ${location.pathname.startsWith('/samples') ? 'active' : ''}`}
                             onClick={(e) => {
                                 // Only toggle on mobile (when hamburger menu is open)
                                 if (mobileMenuOpen) {
+                                    e.preventDefault();
                                     toggleSamplesMenuMobile();
                                 }
-                                // On desktop, prevent default to avoid any navigation
-                                e.preventDefault();
                             }}
                         >
                             Samples
                             <span className="dropdown-arrow">{showSamplesMenu ? '▲' : '▼'}</span>
-                        </span>
+                        </Link>
                         {showSamplesMenu && (
                             <div className="submenu">
                                 <Link
@@ -97,6 +97,12 @@ const Header = () => {
                                     className="submenu-item"
                                 >
                                     Fes
+                                </Link>
+                                <Link
+                                    to="/samples/design"
+                                    className="submenu-item"
+                                >
+                                    Design
                                 </Link>
                                 <Link
                                     to="/samples/shoot"
