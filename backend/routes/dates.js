@@ -1,8 +1,24 @@
 import express from 'express';
 import Date from '../models/Date.js';
 import { requireAuth } from '../middleware/auth.js';
+import { syncGoogleSheets } from '../services/sheetSync.js';
 
 const router = express.Router();
+
+// Sync dates and slots from Google Sheets (admin only)
+router.post('/sync', requireAuth, async (req, res) => {
+    try {
+        const result = await syncGoogleSheets();
+        if (result.success) {
+            res.json({ message: 'Sync completed successfully', ...result });
+        } else {
+            res.status(500).json({ message: result.message || 'Sync failed', error: result.error });
+        }
+    } catch (error) {
+        console.error('Manual sync route error:', error);
+        res.status(500).json({ message: 'Server error during sync', error: error.message });
+    }
+});
 
 // Get all dates with slots (public)
 router.get('/', async (req, res) => {

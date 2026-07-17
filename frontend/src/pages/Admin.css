@@ -144,6 +144,50 @@
     color: var(--color-text-primary);
 }
 
+.admin-controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+}
+
+.sync-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-base, 0.2s ease);
+}
+
+.sync-btn:hover:not(:disabled) {
+    background: var(--color-bg-primary);
+    border-color: var(--color-text-secondary);
+    box-shadow: var(--shadow-sm);
+}
+
+.sync-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.sync-btn.syncing .sync-icon {
+    display: inline-block;
+    animation: rotate-sync 1.2s linear infinite;
+}
+
+@keyframes rotate-sync {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* Modal */
 .modal-overlay {
     position: fixed;

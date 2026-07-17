@@ -25,7 +25,8 @@ export const datesAPI = {
     delete: (id) => api.delete(`/dates/${id}`),
     toggleSlot: (dateId, slotId) => api.put(`/dates/${dateId}/slots/${slotId}`),
     toggleFullSlot: (dateId, message) => api.put(`/dates/${dateId}/fullslot`, { message }),
-    reorder: (dateIds) => api.put('/dates/reorder/all', { dateIds })
+    reorder: (dateIds) => api.put('/dates/reorder/all', { dateIds }),
+    sync: () => api.post('/dates/sync')
 };
 
 export default api;
