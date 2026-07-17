@@ -5,6 +5,7 @@ import session from 'express-session';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import dateRoutes from './routes/dates.js';
+import { syncGoogleSheets } from './services/sheetSync.js';
 import Admin from './models/Admin.js';
 import dns from 'dns';
 
@@ -95,6 +96,20 @@ const startServer = async () => {
         // Start server
         app.listen(PORT, () => {
             console.log(`🚀 Server running on http://localhost:${PORT}`);
+            
+            // Run initial sync after a short delay (5 seconds) to allow the app to fully load
+            setTimeout(() => {
+                syncGoogleSheets().catch(err => {
+                    console.error('❌ Initial Google Sheets sync failed:', err);
+                });
+            }, 5000);
+
+            // Set up background sync interval (every 5 minutes)
+            setInterval(() => {
+                syncGoogleSheets().catch(err => {
+                    console.error('❌ Background Google Sheets sync failed:', err);
+                });
+            }, 5 * 60 * 1000);
         });
     } catch (error) {
         console.error('❌ Error starting server:', error);

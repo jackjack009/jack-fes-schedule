@@ -13,6 +13,8 @@ const Admin = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [syncing, setSyncing] = useState(false);
+    const [syncSuccess, setSyncSuccess] = useState(false);
 
     // Modal state
     const [showModal, setShowModal] = useState(false);
@@ -157,6 +159,25 @@ const Admin = () => {
         } catch (err) {
             console.error('Error deleting date:', err);
             setError('Failed to delete date');
+        }
+    };
+
+    const handleSyncSheets = async () => {
+        setSyncing(true);
+        setError('');
+        setSyncSuccess(false);
+        try {
+            await datesAPI.sync();
+            await fetchDates();
+            await refreshDates();
+            setSyncSuccess(true);
+            setTimeout(() => setSyncSuccess(false), 5000);
+        } catch (err) {
+            console.error('Error syncing Google Sheets:', err);
+            const errorMsg = err.response?.data?.message || err.message || 'Failed to sync with Google Sheets';
+            setError(errorMsg);
+        } finally {
+            setSyncing(false);
         }
     };
 
@@ -384,13 +405,30 @@ const Admin = () => {
                 </div>
             )}
 
+            {syncSuccess && (
+                <div className="alert alert-success">
+                    ✨ Đồng bộ lịch từ Google Sheets thành công!
+                    <button onClick={() => setSyncSuccess(false)} className="alert-close">×</button>
+                </div>
+            )}
+
             <div className="admin-content">
                 {/* Left Sidebar */}
                 <div className="admin-sidebar">
                     <div className="admin-controls">
-                        <button className="btn btn-success" style={{ width: '100%' }} onClick={openCreateModal}>
-                            + Add Date
-                        </button>
+                        <div className="admin-controls-grid">
+                            <button className="btn btn-success" onClick={openCreateModal}>
+                                + Add Date
+                            </button>
+                            <button 
+                                className={`btn btn-secondary sync-btn ${syncing ? 'syncing' : ''}`}
+                                onClick={handleSyncSheets}
+                                disabled={syncing}
+                            >
+                                <span className="sync-icon">🔄</span>
+                                {syncing ? 'Syncing...' : 'Sync'}
+                            </button>
+                        </div>
                     </div>
 
                     <DragDropContext onDragEnd={handleDragEnd}>
