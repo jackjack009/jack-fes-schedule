@@ -34,14 +34,19 @@ router.get('/', async (req, res) => {
 // Create new date (admin only)
 router.post('/', requireAuth, async (req, res) => {
     try {
-        const { name, location } = req.body;
+        const { name, location, note } = req.body;
 
         // Get the highest order number
         const lastDate = await Date.findOne().sort({ order: -1 });
         const order = lastDate ? lastDate.order + 1 : 0;
 
         // Create new date with slots
-        const newDate = new Date({ name, location: location || '', order });
+        const newDate = new Date({ 
+            name, 
+            location: location || '', 
+            note: note || '', 
+            order 
+        });
         newDate.generateSlots();
 
         await newDate.save();
@@ -55,9 +60,10 @@ router.post('/', requireAuth, async (req, res) => {
 // Update date name (admin only)
 router.put('/:id', requireAuth, async (req, res) => {
     try {
-        const { name, location } = req.body;
+        const { name, location, note } = req.body;
         const updateData = { name };
         if (location !== undefined) updateData.location = location;
+        if (note !== undefined) updateData.note = note;
         const date = await Date.findByIdAndUpdate(
             req.params.id,
             updateData,
