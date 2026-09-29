@@ -20,6 +20,10 @@ const dateSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  note: {
+    type: String,
+    default: ''
+  },
   fullSlot: {
     type: Boolean,
     default: false

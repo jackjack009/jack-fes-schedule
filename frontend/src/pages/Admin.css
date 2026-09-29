@@ -258,7 +258,8 @@
     margin-top: var(--spacing-sm);
 }
 
-.fs-message-input {
+.fs-message-input,
+.note-input {
     resize: vertical;
     min-height: 72px;
     font-family: inherit;

@@ -66,17 +66,31 @@ const SlotGrid = ({ selectedDate }) => {
 
             <div className="slot-grid">
                 <div className="slot-grid-header">
-                    <h3>🕐 Lịch cho {selectedDate.name}</h3>
-                    <div className="slot-grid-legend">
-                        <div className="legend-item">
-                            <span className="legend-dot available"></span>
-                            <span>Trống, book đi</span>
-                        </div>
-                        <div className="legend-item">
-                            <span className="legend-dot unavailable"></span>
-                            <span>Đã có người giựt</span>
+                    <div className="slot-grid-header-info">
+                        <h3>🕐 Lịch cho {selectedDate.name}</h3>
+                        <div className="slot-grid-legend">
+                            <div className="legend-item">
+                                <span className="legend-dot available"></span>
+                                <span>Trống, book đi</span>
+                            </div>
+                            <div className="legend-item">
+                                <span className="legend-dot unavailable"></span>
+                                <span>Đã có người giựt</span>
+                            </div>
                         </div>
                     </div>
+
+                    {selectedDate.note && selectedDate.note.trim() && (
+                        <div className="slot-grid-note">
+                            <div className="slot-grid-note-header">
+                                <span className="slot-grid-note-icon">📌</span>
+                                <span className="slot-grid-note-title">Lưu ý</span>
+                            </div>
+                            <div className="slot-grid-note-content">
+                                {selectedDate.note}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="slot-grid-body">

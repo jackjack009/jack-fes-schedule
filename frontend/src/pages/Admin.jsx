@@ -22,6 +22,7 @@ const Admin = () => {
     const [modalDateId, setModalDateId] = useState(null);
     const [modalTitle, setModalTitle] = useState('');
     const [modalLocation, setModalLocation] = useState('');
+    const [modalNote, setModalNote] = useState('');
     const [modalLoading, setModalLoading] = useState(false);
 
     // Full Slot message modal state
@@ -106,6 +107,7 @@ const Admin = () => {
         setModalDateId(null);
         setModalTitle('');
         setModalLocation('');
+        setModalNote('');
         setShowModal(true);
     };
 
@@ -116,6 +118,7 @@ const Admin = () => {
         setModalDateId(date._id);
         setModalTitle(date.name);
         setModalLocation(date.location || '');
+        setModalNote(date.note || '');
         setShowModal(true);
     };
 
@@ -123,6 +126,7 @@ const Admin = () => {
         setShowModal(false);
         setModalTitle('');
         setModalLocation('');
+        setModalNote('');
         setModalDateId(null);
     };
 
@@ -132,9 +136,17 @@ const Admin = () => {
         setModalLoading(true);
         try {
             if (modalMode === 'create') {
-                await datesAPI.create({ name: modalTitle.trim(), location: modalLocation.trim() });
+                await datesAPI.create({ 
+                    name: modalTitle.trim(), 
+                    location: modalLocation.trim(),
+                    note: modalNote.trim() 
+                });
             } else {
-                await datesAPI.update(modalDateId, { name: modalTitle.trim(), location: modalLocation.trim() });
+                await datesAPI.update(modalDateId, { 
+                    name: modalTitle.trim(), 
+                    location: modalLocation.trim(),
+                    note: modalNote.trim() 
+                });
             }
             closeModal();
             await fetchDates();
@@ -340,6 +352,16 @@ const Admin = () => {
                                     value={modalLocation}
                                     onChange={(e) => setModalLocation(e.target.value)}
                                     placeholder="e.g., Hall A, Floor 2"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Note</label>
+                                <textarea
+                                    className="form-input note-input"
+                                    value={modalNote}
+                                    onChange={(e) => setModalNote(e.target.value)}
+                                    placeholder="e.g., Note for users..."
+                                    rows={3}
                                 />
                             </div>
                             <div className="modal-actions">

@@ -11,9 +11,65 @@
 }
 
 .slot-grid-header {
-    padding: 1.5rem;
+    padding: 1.5rem calc(1.5rem + 8px) 1.5rem 1.5rem;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.slot-grid-header-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.slot-grid-note {
+    flex-shrink: 0;
+    max-width: 380px;
+    min-width: 240px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.slot-grid-note-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+.slot-grid-note-icon {
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.slot-grid-note-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-secondary);
+}
+
+.slot-grid-note-content {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-align: right;
+    width: 100%;
 }
 
 .slot-grid-header h3 {
@@ -217,6 +273,14 @@
 
     .slot-grid-header {
         padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .slot-grid-note {
+        max-width: 100%;
+        min-width: 0;
+        width: 100%;
     }
 
     .slot-grid-header h3 {

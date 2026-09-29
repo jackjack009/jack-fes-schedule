@@ -212,6 +212,7 @@ export async function syncGoogleSheets() {
         const newDate = new DateModel({
           name: sheetName,
           location: '',
+          note: '',
           fullSlot: false,
           fullSlotMessage: '',
           order,
