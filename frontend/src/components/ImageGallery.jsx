@@ -1,13 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import './ImageGallery.css';
 
 const ImageGallery = ({ folder, title, driveUrl }) => {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(null);
+    const [nextPageToken, setNextPageToken] = useState(null);
+    const [hasMore, setHasMore] = useState(false);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [hoveredImage, setHoveredImage] = useState(null);
+
+    const sentinelRef = useRef(null);
+    const nextPageTokenRef = useRef(null);
+    const isFetchingMoreRef = useRef(false);
+
+    // Keep ref in sync for callbacks
+    nextPageTokenRef.current = nextPageToken;
 
     useEffect(() => {
         if (driveUrl) {
@@ -21,6 +31,9 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
     const fetchImagesFromDrive = async (url) => {
         setLoading(true);
         setError(null);
+        setNextPageToken(null);
+        nextPageTokenRef.current = null;
+        setHasMore(false);
 
         try {
             const folderId = extractFolderId(url);
@@ -38,7 +51,8 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
             const apiUrl = `https://www.googleapis.com/drive/v3/files?` +
                 `q='${folderId}'+in+parents+and+mimeType+contains+'image/'` +
                 `&key=${apiKey}` +
-                `&fields=files(id,name,mimeType,thumbnailLink,webContentLink)` +
+                `&pageSize=100` +
+                `&fields=nextPageToken,files(id,name,mimeType,thumbnailLink,webContentLink)` +
                 `&orderBy=name`;
 
             const response = await fetch(apiUrl);
@@ -66,9 +80,16 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
                     };
                 });
                 setImages(driveImages);
+                const nextToken = data.nextPageToken || null;
+                setNextPageToken(nextToken);
+                nextPageTokenRef.current = nextToken;
+                setHasMore(Boolean(nextToken));
                 setError(null);
             } else {
                 setImages([]);
+                setNextPageToken(null);
+                nextPageTokenRef.current = null;
+                setHasMore(false);
                 setError('Folder không có miếng ảnh nào luôn, vui lòng nhắn tin cho JackJack');
             }
         } catch (err) {
@@ -79,6 +100,123 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
             setLoading(false);
         }
     };
+
+    const loadMoreImages = useCallback(async () => {
+        const currentToken = nextPageTokenRef.current;
+        if (!driveUrl || !currentToken || isFetchingMoreRef.current || loading) {
+            return;
+        }
+
+        const folderId = extractFolderId(driveUrl);
+        const apiKey = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY;
+        if (!folderId || !apiKey) return;
+
+        isFetchingMoreRef.current = true;
+        setLoadingMore(true);
+
+        try {
+            const apiUrl = `https://www.googleapis.com/drive/v3/files?` +
+                `q='${folderId}'+in+parents+and+mimeType+contains+'image/'` +
+                `&key=${apiKey}` +
+                `&pageSize=100` +
+                `&fields=nextPageToken,files(id,name,mimeType,thumbnailLink,webContentLink)` +
+                `&orderBy=name` +
+                `&pageToken=${encodeURIComponent(currentToken)}`;
+
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            if (data.error) {
+                throw new Error(data.error.message || 'Không load thêm được ảnh');
+            }
+
+            if (data.files && data.files.length > 0) {
+                setImages((prevImages) => {
+                    const startIndex = prevImages.length;
+                    const newImages = data.files.map((file, index) => {
+                        const imageUrl = `https://lh3.googleusercontent.com/d/${file.id}=w2000`;
+                        const thumbnailUrl = `https://lh3.googleusercontent.com/d/${file.id}=w400`;
+
+                        return {
+                            id: file.id,
+                            src: imageUrl,
+                            alt: file.name || `${title} ${startIndex + index + 1}`,
+                            thumbnail: thumbnailUrl
+                        };
+                    });
+                    return [...prevImages, ...newImages];
+                });
+
+                const nextToken = data.nextPageToken || null;
+                setNextPageToken(nextToken);
+                nextPageTokenRef.current = nextToken;
+                setHasMore(Boolean(nextToken));
+            } else {
+                setNextPageToken(null);
+                nextPageTokenRef.current = null;
+                setHasMore(false);
+            }
+        } catch (err) {
+            console.error('Error fetching more images from Google Drive:', err);
+        } finally {
+            isFetchingMoreRef.current = false;
+            setLoadingMore(false);
+        }
+    }, [driveUrl, loading, title]);
+
+    // IntersectionObserver for infinite scroll when scrolling down
+    useEffect(() => {
+        const sentinel = sentinelRef.current;
+        if (!sentinel || !hasMore || loading) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0];
+                if (entry.isIntersecting && !isFetchingMoreRef.current) {
+                    loadMoreImages();
+                }
+            },
+            {
+                rootMargin: '400px',
+                threshold: 0.01
+            }
+        );
+
+        observer.observe(sentinel);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasMore, loading, loadMoreImages]);
+
+    // Window scroll listener fallback
+    useEffect(() => {
+        if (!hasMore || loading) return;
+
+        const handleScroll = () => {
+            if (isFetchingMoreRef.current) return;
+            const scrollHeight = document.documentElement.scrollHeight;
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const clientHeight = window.innerHeight;
+
+            if (scrollTop + clientHeight >= scrollHeight - 600) {
+                loadMoreImages();
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [hasMore, loading, loadMoreImages]);
+
+    // Automatically load more if lightbox viewer approaches the end of loaded list
+    useEffect(() => {
+        if (lightboxOpen && hasMore && images.length - currentImageIndex <= 5) {
+            loadMoreImages();
+        }
+    }, [lightboxOpen, currentImageIndex, images.length, hasMore, loadMoreImages]);
 
     const extractFolderId = (url) => {
         // Extract folder ID from various Google Drive URL formats
@@ -244,6 +382,17 @@ const ImageGallery = ({ folder, title, driveUrl }) => {
                     </div>
                 ))}
             </div>
+
+            {/* Infinite Scroll Sentinel */}
+            {hasMore && <div ref={sentinelRef} className="gallery-sentinel" />}
+
+            {/* Loading More Indicator */}
+            {loadingMore && (
+                <div className="loading-more-container">
+                    <div className="spinner-sm"></div>
+                    <p>Đang tải thêm 100 ảnh tiếp theo...</p>
+                </div>
+            )}
 
             {!driveUrl && (
                 <div className="upload-instructions">
